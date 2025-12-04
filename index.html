@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>First Aid App Dashboard</title>
+<link rel="stylesheet" href="./css/styles.css">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#C62828">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("Service Worker Registered"));
+  }
+</script>
+
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <style>
+    .menu-button {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: #C62828;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 18px;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+    .menu-button:hover {
+      background: #8E0000;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>First Aid App Dashboard</h1>
+
+    <a class="menu-button" href="report.html">📄 Create Injury Report</a>
+    <a class="menu-button" href="inventory.html">📦 View Inventory</a>
+    <a class="menu-button" href="addStock.html">➕ Add Stock to Inventory</a>
+    <a class="menu-button" href="transfer.html">🔄 Transfer Stock</a>
+    <a class="menu-button" href="inventoryLogs.html">📑 Inventory Logs</a>
+    <a class="menu-button" href="reportLogs.html">🗂 Injury Report Logs</a>
+  </div>
+</body>
+</html>

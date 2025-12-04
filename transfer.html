@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transfer Stock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <style>
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      margin-top: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 12px;
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #C62828;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #8E0000; }
+
+    #qtyInfo {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #444;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Transfer Stock</h1>
+
+    <nav>
+      <a href="index.html">← Back to Dashboard</a>
+      <a href="inventory.html">View Inventory</a>
+    </nav>
+
+    <div class="card">
+
+      <form id="transferForm">
+
+        <label>Select Item</label>
+        <select id="itemSelect" required>
+          <option value="">Select Item</option>
+        </select>
+
+        <label>Transfer From (Source Location)</label>
+        <select id="fromLocation" required>
+          <option value="">Select Location</option>
+        </select>
+
+        <label>Transfer To (Destination Location)</label>
+        <select id="toLocation" required>
+          <option value="">Select Location</option>
+        </select>
+
+        <div id="qtyInfo">Select item + source to view quantity.</div>
+
+        <label>Transfer Quantity</label>
+        <input id="transferQty" type="number" min="1" required>
+
+        <label>Reason (Required)</label>
+        <textarea id="reason" placeholder="Explain why transfer is required..." required></textarea>
+
+        <button type="submit">Confirm Transfer</button>
+
+      </form>
+
+    </div>
+  </div>
+
+  <script type="module" src="./js/transfer.js"></script>
+
+</body>
+</html>

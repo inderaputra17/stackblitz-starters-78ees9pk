@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventory Logs & Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <style>
+    body {
+      background: #f4f4f4;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    nav a {
+      display: inline-block;
+      background: #C62828;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-right: 8px;
+      color: white !important;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      background: #8E0000;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 25px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+
+    h2.section-title {
+      color: #C62828;
+      border-left: 5px solid #C62828;
+      padding-left: 10px;
+      margin-bottom: 18px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f7f7f7;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .timestamp {
+      font-size: 13px;
+      color: #555;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Inventory Logs & Summary</h1>
+
+    <nav>
+      <a href="index.html">← Dashboard</a>
+      <a href="inventory.html">Manage Inventory</a>
+    </nav>
+
+    <!-- SUMMARY -->
+    <div class="card">
+      <h2 class="section-title">Current Inventory Summary</h2>
+      <table id="summaryTable">
+        <thead id="summaryHead"></thead>
+        <tbody id="summaryBody"></tbody>
+      </table>
+    </div>
+
+    <!-- AUDIT LOGS -->
+    <div class="card">
+      <h2 class="section-title">Audit Trail – Stock Movements</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date / Time</th>
+            <th>Action</th>
+            <th>Item</th>
+            <th>Location</th>
+            <th>Qty</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+
+        <tbody id="auditBody">
+          <tr><td colspan="6">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script type="module" src="./js/inventoryLogs.js"></script>
+</body>
+</html>

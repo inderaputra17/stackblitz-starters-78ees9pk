@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Injury Report Logs</title>
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <style>
+    .log-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      margin-bottom: 15px;
+    }
+    .log-header {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .log-meta {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .full-report {
+      background: #fafafa;
+      padding: 12px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+      font-size: 14px;
+      border: 1px solid #eee;
+      margin-top: 10px;
+    }
+    .copy-btn {
+      margin-top: 10px;
+      background: #1565C0;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: #0d47a1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Injury Report Logs</h1>
+
+    <nav>
+      <a href="index.html">← Back to Dashboard</a>
+    </nav>
+
+    <div id="logsContainer">
+      Loading reports...
+    </div>
+
+  </div>
+
+  <script type="module">
+
+    import { db } from "./js/app.js";
+    import { 
+      collection, getDocs, orderBy, query 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const logsContainer = document.getElementById("logsContainer");
+
+    async function loadLogs() {
+      logsContainer.textContent = "Loading...";
+
+      try {
+        const q = query(
+          collection(db, "injuryReports"),
+          orderBy("createdAt", "desc")
+        );
+
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          logsContainer.textContent = "No reports found.";
+          return;
+        }
+
+        logsContainer.innerHTML = "";
+
+        snapshot.forEach(doc => {
+          const r = doc.data();
+
+          const card = document.createElement("div");
+          card.className = "log-card";
+
+          card.innerHTML = `
+            <div class="log-header">${r.patientName} (${r.caseType})</div>
+            <div class="log-meta">
+              ${r.timeIn}–${r.timeOut} hrs • ${r.location}
+            </div>
+
+            <div class="full-report">${r.fullText}</div>
+
+            <button class="copy-btn">📋 Copy Report</button>
+          `;
+
+          card.querySelector(".copy-btn").onclick = () => {
+            navigator.clipboard.writeText(r.fullText)
+              .then(() => alert("Report copied!"));
+          };
+
+          logsContainer.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error(err);
+        logsContainer.textContent = "Error loading logs.";
+      }
+    }
+
+    loadLogs();
+
+  </script>
+
+</body>
+</html>

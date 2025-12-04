@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Injury Report</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+
+  <style>
+    #previewBox {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      margin-top: 25px;
+      white-space: pre-wrap;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    #previewTitle {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #B71C1C;
+    }
+
+    .section-title {
+      margin-top: 25px;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #B71C1C;
+      border-left: 4px solid #B71C1C;
+      padding-left: 10px;
+    }
+
+    #copyButton {
+      margin-top: 15px;
+      background: #1565C0;
+      border: none;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #copyButton:hover {
+      background: #0d47a1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Create Injury Report</h1>
+
+    <nav>
+      <a href="index.html">← Back to Dashboard</a>
+    </nav>
+
+    <!-- FORM CARD -->
+    <div class="card">
+      <form id="injuryForm">
+
+        <!-- TIME -->
+        <h2 class="section-title">⏱ Time Details</h2>
+
+        <div class="form-group">
+          <label>Time In (### hrs):</label>
+          <input id="timeIn" type="text" placeholder="1600" required>
+        </div>
+
+        <div class="form-group">
+          <label>Time Out (### hrs):</label>
+          <input id="timeOut" type="text" placeholder="1610" required>
+        </div>
+
+        <!-- PATIENT INFO -->
+        <h2 class="section-title">🧑‍⚕️ Patient Information</h2>
+
+        <div class="form-group">
+          <label>Patient Name:</label>
+          <input id="patientName" type="text" required>
+        </div>
+
+        <div class="form-group">
+          <label>Gender:</label>
+          <select id="gender">
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Age:</label>
+          <input id="age" type="number" required>
+        </div>
+
+        <div class="form-group">
+          <label>Contact No.:</label>
+          <input id="contact" type="text" placeholder="Optional">
+        </div>
+
+        <!-- CASE INFO -->
+        <h2 class="section-title">📌 Case Information</h2>
+
+        <div class="form-group">
+          <label>Case Type:</label>
+          <select id="caseType">
+            <option>P3</option>
+            <option>P2</option>
+            <option>P1</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Location (Event Area):</label>
+          <input id="location" type="text" placeholder="Walk-In @ EP / Call-Out @ Starbucks" required>
+        </div>
+
+        <!-- MOI (manual input) -->
+        <h2 class="section-title">⚠️ Mechanism of Injury (MOI)</h2>
+
+        <div class="form-group">
+          <label>MOI Description:</label>
+          <textarea id="moi" rows="3" placeholder="Describe how injury happened..." required></textarea>
+        </div>
+
+        <!-- TREATMENT (manual input) -->
+        <h2 class="section-title">🩹 Treatment Provided</h2>
+
+        <div class="form-group">
+          <label>Treatment:</label>
+          <textarea id="treatment" rows="3" placeholder="Describe treatment done..." required></textarea>
+        </div>
+
+        <!-- DISCHARGE -->
+        <h2 class="section-title">🚑 Discharge Method</h2>
+
+        <div class="form-group">
+          <label>Discharge Method:</label>
+          <select id="discharge">
+            <option value="self">Self-discharged and continued with activity</option>
+            <option value="ambulance">Conveyed by Ambulance</option>
+            <option value="other">Other (manual input)</option>
+          </select>
+        </div>
+
+        <!-- Ambulance Fields -->
+        <div id="ambulanceFields" style="display:none;">
+
+          <div class="form-group">
+            <label>Ambulance Alpha No. (3 digits):</label>
+            <input id="alphaNo" type="number" maxlength="3" placeholder="e.g., 123">
+          </div>
+
+          <div class="form-group">
+            <label>Receiving Hospital:</label>
+            <input id="hospital" type="text" placeholder="e.g., NUH, NTFGH">
+          </div>
+
+          <div class="form-group">
+            <label>Paramedic Rank & Name:</label>
+            <input id="paramedic" type="text" placeholder="e.g., SGT Lim">
+          </div>
+
+        </div>
+
+        <!-- OTHER DISCHARGE -->
+        <div class="form-group">
+          <label>Other Discharge (Optional):</label>
+          <input id="dischargeOther" type="text" placeholder="Only if 'Other' is selected">
+        </div>
+
+        <button type="submit">Submit Report</button>
+
+      </form>
+    </div>
+
+
+    <!-- REAL-TIME OUTPUT -->
+    <div id="previewBox">
+      <div id="previewTitle">📄 Generated Report (Copy & Paste)</div>
+      <div id="previewText">Fill in the form to generate report...</div>
+
+      <button id="copyButton">📋 Copy Report</button>
+    </div>
+
+  </div>
+
+
+  <!-- JAVASCRIPT -->
+  <script>
+    function v(id) {
+      return document.getElementById(id).value || "";
+    }
+
+    function toggleAmbulance() {
+      const d = v("discharge");
+      document.getElementById("ambulanceFields").style.display =
+        d === "ambulance" ? "block" : "none";
+    }
+
+    document.getElementById("discharge").addEventListener("change", toggleAmbulance);
+
+    function dischargeText() {
+      const d = v("discharge");
+
+      if (d === "self") {
+        return "Self-discharged and continued with activity";
+      }
+
+      if (d === "ambulance") {
+        return `Sent by Alpha ${v("alphaNo")} to ${v("hospital")}, handed over to ${v("paramedic")}`;
+      }
+
+      if (d === "other") {
+        return v("dischargeOther");
+      }
+
+      return "";
+    }
+
+    function updatePreview() {
+      const report =
+`Time in: ${v("timeIn")} hrs
+Time out: ${v("timeOut")} hrs
+Patient’s name: ${v("patientName")}
+Gender: ${v("gender")}
+Age: ${v("age")}
+Contact no.: ${v("contact")}
+
+Case Type : ${v("caseType")}
+Location : ${v("location")}
+
+Mechanism (MOI) & Treatment :
+${v("moi")}
+
+${v("treatment")}
+
+Discharge Method :
+${dischargeText()}.`;
+
+      document.getElementById("previewText").textContent = report;
+    }
+
+    [
+      "timeIn","timeOut","patientName","gender","age","contact",
+      "caseType","location","moi","treatment",
+      "discharge","dischargeOther","alphaNo","hospital","paramedic"
+    ].forEach(id => {
+      document.getElementById(id)?.addEventListener("input", updatePreview);
+    });
+
+    updatePreview();
+
+        // Copy button
+        document.getElementById("copyButton").onclick = () => {
+      navigator.clipboard.writeText(document.getElementById("previewText").textContent)
+        .then(() => alert("Report copied to clipboard!"));
+    };
+  </script>
+
+  <!-- ADD THIS 🔥 FIREBASE SAVING SCRIPT -->
+  <script type="module" src="./js/report.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Inventory Item</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="./css/styles.css">
+
+  <style>
+    body { background: #f4f4f4; }
+
+    nav a {
+      display:inline-block; background:#C62828; padding:10px 14px;
+      border-radius:6px; margin-right:8px; color:white !important;
+      font-weight:bold; text-decoration:none; font-size:14px;
+    }
+    .card {
+      background:white; padding:20px; border-radius:12px;
+      margin-top:20px; box-shadow:0 3px 8px rgba(0,0,0,0.12);
+    }
+    label { font-weight:bold; margin-top:14px; display:block; }
+    input, select {
+      width:100%; padding:12px; margin-top:6px; border:1px solid #ccc;
+      border-radius:6px; font-size:15px;
+    }
+    button {
+      width:100%; background:#C62828; border:none; padding:14px;
+      font-size:16px; color:white; margin-top:20px; border-radius:6px;
+      cursor:pointer; font-weight:bold;
+    }
+    button:hover { background:#8E0000; }
+
+    .inline-btn {
+      background:#1565c0; padding:8px 10px; margin-top:8px;
+      border-radius:6px; color:white; font-size:13px;
+      cursor:pointer; width:auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Add Inventory Item</h1>
+
+    <nav>
+      <a href="index.html">← Dashboard</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="inventoryLogs.html">Logs & Summary</a>
+    </nav>
+
+    <div class="card">
+      <form id="addStockForm">
+
+        <label>Item Name</label>
+        <input id="itemName" type="text" placeholder="Bandage, Gauze, Tape…" required>
+
+        <label>Quantity</label>
+        <input id="itemQty" type="number" min="1" required>
+
+        <label>Location</label>
+        <select id="locationSelect" required>
+          <option value="">Select an existing location</option>
+        </select>
+
+        <button type="button" id="addNewLocationBtn" class="inline-btn">+ Add New Location</button>
+
+        <label>Default PAR</label>
+        <input id="parDefault" type="number" min="0" placeholder="Optional">
+
+        <label>Default MIN</label>
+        <input id="minDefault" type="number" min="0" placeholder="Optional">
+
+        <label>Default MAX</label>
+        <input id="maxDefault" type="number" min="0" placeholder="Optional">
+
+        <button type="submit">Add / Top-Up Item</button>
+
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="./js/addStock.js"></script>
+</body>
+</html>
