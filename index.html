@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>First Aid App Dashboard</title>
+
+<!-- Main Styles -->
 <link rel="stylesheet" href="./css/styles.css">
 
 <!-- PWA -->
@@ -17,38 +20,66 @@
   }
 </script>
 
-  <link rel="stylesheet" href="./css/styles.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    margin: 0;
+    padding: 0;
+  }
 
-  <style>
-    .menu-button {
-      display: block;
-      width: 100%;
-      padding: 16px;
-      background: #C62828;
-      color: white;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 18px;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-    .menu-button:hover {
-      background: #8E0000;
-    }
-  </style>
+  .container {
+    max-width: 480px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+
+  h1 {
+    margin-bottom: 32px;
+    color: #C62828;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .menu-button {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #C62828;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 18px;
+    margin-bottom: 14px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: 0.2s ease;
+  }
+
+  .menu-button:hover {
+    background: #8E0000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+</style>
+
 </head>
 
 <body>
   <div class="container">
-    <h1>First Aid App Dashboard</h1>
+    <h1>First Aid Dashboard</h1>
 
     <a class="menu-button" href="report.html">📄 Create Injury Report</a>
     <a class="menu-button" href="inventory.html">📦 View Inventory</a>
-    <a class="menu-button" href="addStock.html">➕ Add Stock to Inventory</a>
+    <a class="menu-button" href="addStock.html">➕ Add Stock</a>
     <a class="menu-button" href="transfer.html">🔄 Transfer Stock</a>
     <a class="menu-button" href="inventoryLogs.html">📑 Inventory Logs</a>
-    <a class="menu-button" href="reportLogs.html">🗂 Injury Report Logs</a>
+    <a class="menu-button" href="reportLogs.html">🗂 Report Logs</a>
   </div>
 </body>
 </html>
