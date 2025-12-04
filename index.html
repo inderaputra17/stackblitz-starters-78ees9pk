@@ -30,7 +30,7 @@
 
   .container {
     max-width: 480px;
-    margin: 50px auto;
+    margin: 30px auto;
     padding: 20px;
     background: white;
     border-radius: 16px;
@@ -38,33 +38,52 @@
     text-align: center;
   }
 
+  /* 🔥 LOW STOCK BANNER */
+  .alert-banner {
+    display: none;
+    background: #ffebee;
+    border-left: 6px solid #c62828;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    color: #b71c1c;
+    font-weight: bold;
+    text-align: left;
+  }
+
   h1 {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     color: #C62828;
     font-size: 28px;
     font-weight: bold;
   }
 
-  .menu-button {
-    display: block;
-    width: 100%;
-    padding: 16px;
+  /* 🔳 APP TILE BUTTONS (square style) */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .menu-tile {
     background: #C62828;
     color: white;
-    text-align: center;
+    padding: 26px 10px;
+    border-radius: 14px;
     text-decoration: none;
-    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 110px;
     font-size: 18px;
-    margin-bottom: 14px;
     font-weight: bold;
-    letter-spacing: 0.5px;
     transition: 0.2s ease;
   }
 
-  .menu-button:hover {
+  .menu-tile:hover {
     background: #8E0000;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
   }
 </style>
 
@@ -72,14 +91,79 @@
 
 <body>
   <div class="container">
+
+    <!-- 🔥 WARNING BANNER -->
+    <div id="lowStockBanner" class="alert-banner"></div>
+
     <h1>First Aid Dashboard</h1>
 
-    <a class="menu-button" href="report.html">📄 Create Injury Report</a>
-    <a class="menu-button" href="inventory.html">📦 View Inventory</a>
-    <a class="menu-button" href="addStock.html">➕ Add Stock</a>
-    <a class="menu-button" href="transfer.html">🔄 Transfer Stock</a>
-    <a class="menu-button" href="inventoryLogs.html">📑 Inventory Logs</a>
-    <a class="menu-button" href="reportLogs.html">🗂 Report Logs</a>
+    <div class="menu-grid">
+      <a class="menu-tile" href="report.html">📄 <br>Report</a>
+      <a class="menu-tile" href="inventory.html">📦 <br>Inventory</a>
+      <a class="menu-tile" href="addStock.html">➕ <br>Add Stock</a>
+      <a class="menu-tile" href="transfer.html">🔄 <br>Transfer</a>
+      <a class="menu-tile" href="inventoryLogs.html">📑 <br>Logs</a>
+      <a class="menu-tile" href="reportLogs.html">🗂 <br>Reports</a>
+    </div>
+
   </div>
+
+  <!-- 🔥 LOW STOCK CHECK SCRIPT -->
+  <script type="module">
+    import { db } from "./js/app.js";
+    import {
+      collection,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const banner = document.getElementById("lowStockBanner");
+
+    async function checkLowStock() {
+      const snap = await getDocs(collection(db, "inventory"));
+
+      let lowList = [];
+      let criticalList = [];
+
+      snap.forEach(doc => {
+        const data = doc.data();
+        const name = data.displayName;
+        const locations = data.locations || {};
+
+        Object.keys(locations).forEach(loc => {
+          const info = locations[loc];
+          const qty = info.qty || 0;
+          const par = info.par ?? 0;
+          const min = info.min ?? 0;
+
+          if (qty <= min) {
+            criticalList.push(`${name} (${loc})`);
+          } else if (qty < par) {
+            lowList.push(`${name} (${loc})`);
+          }
+        });
+      });
+
+      if (criticalList.length === 0 && lowList.length === 0) {
+        banner.style.display = "none";
+        return;
+      }
+
+      let html = "";
+
+      if (criticalList.length > 0) {
+        html += `🔴 <b>Critical Stock:</b><br>${criticalList.join("<br>")}<br><br>`;
+      }
+
+      if (lowList.length > 0) {
+        html += `🟠 <b>Low Stock:</b><br>${lowList.join("<br>")}`;
+      }
+
+      banner.innerHTML = html;
+      banner.style.display = "block";
+    }
+
+    checkLowStock();
+  </script>
+
 </body>
 </html>
