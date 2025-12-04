@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,72 +10,137 @@
   <style>
     body {
       background: #f4f4f4;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 16px;
     }
 
     h1 {
-      margin-bottom: 20px;
-      color: #333;
+      margin-bottom: 18px;
+      color: #C62828;
+      font-size: 26px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    nav {
+      margin-bottom: 18px;
+      text-align: center;
     }
 
     nav a {
       display: inline-block;
       background: #C62828;
-      padding: 10px 14px;
-      border-radius: 6px;
+      padding: 10px 16px;
+      border-radius: 999px;
       margin-right: 8px;
-      color: white !important;
-      font-weight: bold;
+      color: #fff !important;
+      font-weight: 600;
       text-decoration: none;
       font-size: 14px;
     }
+    nav a:hover { background: #8E0000; }
 
-    nav a:hover {
-      background: #8E0000;
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr);
+      gap: 20px;
     }
 
     .card {
       background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 25px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      padding: 18px 20px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
     }
 
     h2.section-title {
       color: #C62828;
       border-left: 5px solid #C62828;
       padding-left: 10px;
-      margin-bottom: 18px;
-      font-size: 20px;
-      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     th, td {
-      padding: 12px;
+      padding: 10px 8px;
       border-bottom: 1px solid #eee;
-      font-size: 14px;
+      font-size: 13px;
+      text-align: left;
     }
 
     th {
       background: #f7f7f7;
       text-transform: uppercase;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.03em;
     }
 
-    tr:nth-child(even) {
+    tr:nth-child(even) td {
       background: #fafafa;
     }
 
     .timestamp {
-      font-size: 13px;
-      color: #555;
       white-space: nowrap;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .number-cell {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .badge-increase { background: #2e7d32; }
+    .badge-decrease { background: #c62828; }
+    .badge-transfer { background: #1565c0; }
+    .badge-level    { background: #6d4c41; }
+    .badge-delete   { background: #8e0000; }
+
+    .net-positive { color: #2e7d32; font-weight: 600; }
+    .net-negative { color: #c62828; font-weight: 600; }
+    .net-zero     { color: #555; font-weight: 500; }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #eee;
+      font-size: 11px;
+      color: #555;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 10px; }
+      .card { padding: 14px; }
+      th, td { font-size: 12px; }
     }
   </style>
 </head>
@@ -87,39 +152,71 @@
 
     <nav>
       <a href="index.html">← Dashboard</a>
-      <a href="inventory.html">Manage Inventory</a>
+      <a href="inventory.html">📦 Manage Inventory</a>
     </nav>
 
-    <!-- SUMMARY -->
-    <div class="card">
-      <h2 class="section-title">Current Inventory Summary</h2>
-      <table id="summaryTable">
-        <thead id="summaryHead"></thead>
-        <tbody id="summaryBody"></tbody>
-      </table>
+    <div class="page-grid">
+
+      <!-- CURRENT INVENTORY SNAPSHOT -->
+      <div class="card">
+        <h2 class="section-title">Current Inventory Snapshot</h2>
+        <div class="section-subtitle">
+          Live stock pulled directly from the <span class="pill">inventory</span> collection.
+          Deleting audit logs will not change these numbers.
+        </div>
+        <table id="summaryTable">
+          <thead id="summaryHead"></thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+      </div>
+
+      <!-- AUDIT SUMMARY (FROM LOGS) -->
+      <div class="card">
+        <h2 class="section-title">Audit Summary (by Item & Location)</h2>
+        <div class="section-subtitle">
+          Net movement calculated from <span class="pill">inventoryLogs</span>.
+          If you delete logs, this summary will reset.
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Location</th>
+              <th class="number-cell">In (+)</th>
+              <th class="number-cell">Out (−)</th>
+              <th class="number-cell">Net</th>
+            </tr>
+          </thead>
+          <tbody id="auditSummaryBody">
+            <tr><td colspan="5">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- AUDIT TRAIL -->
+      <div class="card">
+        <h2 class="section-title">Audit Trail – Stock Movements</h2>
+        <div class="section-subtitle">
+          Detailed log of every change: top-ups, reductions, transfers and level updates.
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date / Time</th>
+              <th>Type</th>
+              <th>Item</th>
+              <th>Location / Route</th>
+              <th class="number-cell">Qty</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody id="auditBody">
+            <tr><td colspan="6">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
-
-    <!-- AUDIT LOGS -->
-    <div class="card">
-      <h2 class="section-title">Audit Trail – Stock Movements</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date / Time</th>
-            <th>Action</th>
-            <th>Item</th>
-            <th>Location</th>
-            <th>Qty</th>
-            <th>Reason</th>
-          </tr>
-        </thead>
-
-        <tbody id="auditBody">
-          <tr><td colspan="6">Loading…</td></tr>
-        </tbody>
-      </table>
-    </div>
-
   </div>
 
   <script type="module" src="./js/inventoryLogs.js"></script>
