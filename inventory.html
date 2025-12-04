@@ -4,206 +4,143 @@
   <meta charset="UTF-8">
   <title>Inventory Overview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <link rel="stylesheet" href="./css/styles.css">
 
   <style>
-    body {
-      background: #f4f4f4;
-    }
+    body { background:#f4f4f4; }
 
-    h1 {
-      margin-bottom: 20px;
+    h1 { 
+      color:#C62828;
+      text-align:center;
+      margin-bottom:20px;
     }
 
     nav a {
-      display: inline-block;
-      background: #C62828;
-      padding: 10px 14px;
-      border-radius: 6px;
-      margin-right: 10px;
-      color: white !important;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    nav a:hover {
-      background: #8E0000;
+      display:inline-block;
+      background:#C62828;
+      padding:10px 14px;
+      border-radius:6px;
+      margin-right:8px;
+      color:white !important;
+      font-weight:bold;
+      text-decoration:none;
+      font-size:14px;
     }
 
     .location-card {
-      background: white;
-      padding: 18px;
-      margin-bottom: 22px;
-      border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      background:white;
+      padding:18px;
+      border-radius:12px;
+      margin-bottom:20px;
+      box-shadow:0 3px 8px rgba(0,0,0,0.1);
     }
 
-    .location-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 12px;
-      color: #C62828;
+    .item-title {
+      font-size:20px;
+      font-weight:bold;
+      color:#C62828;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
+    .item-meta {
+      font-size:14px;
+      color:#555;
+      margin-bottom:12px;
+    }
+
+    table { 
+      width:100%; 
+      border-collapse:collapse; 
+      margin-top:10px;
     }
 
     th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #eee;
-      font-size: 14px;
-    }
-
-    th {
-      background: #f7f7f7;
-      text-transform: uppercase;
-      font-size: 13px;
+      padding:10px 12px;
+      border-bottom:1px solid #eee;
+      font-size:14px;
     }
 
     .badge {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: bold;
-      color: white;
+      padding:4px 10px;
+      border-radius:999px;
+      color:white;
+      font-size:12px;
+      font-weight:bold;
     }
-    .ok { background: #2e7d32; }
-    .low { background: #ef6c00; }
-    .critical { background: #c62828; }
-    .overstock { background: #1565c0; }
+    .ok { background:#2e7d32; }
+    .low { background:#ef6c00; }
+    .critical { background:#d32f2f; }
+    .overstock { background:#1565c0; }
 
     .action-btn {
-      padding: 6px 9px;
-      border-radius: 6px;
-      cursor: pointer;
-      color: white;
-      font-size: 12px;
-      border: none;
-      margin-right: 4px;
-      font-weight: bold;
+      padding:6px 9px;
+      border:none;
+      font-size:12px;
+      border-radius:6px;
+      color:white;
+      cursor:pointer;
+      margin-right:4px;
+      font-weight:bold;
     }
 
-    .add-btn { background: #2e7d32; }
-    .minus-btn { background: #ef6c00; }
-    .delete-btn { background: #b71c1c; }
-    .details-btn { background: #1565c0; }
+    .add-btn { background:#2e7d32; }
+    .minus-btn { background:#ef6c00; }
+    .delete-btn { background:#b71c1c; }
+    .edit-btn { background:#1565c0; }
 
-    .add-location-btn {
-      width: 100%;
-      background: #C62828;
-      padding: 12px;
-      border-radius: 6px;
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      margin-top: 25px;
-      cursor: pointer;
-      border: none;
-    }
-
-    /* Details row */
-    .details-row td {
-      background: #fafafa;
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    .level-field {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 16px;
-      margin-bottom: 8px;
-    }
-
-    .level-field label {
-      font-weight: bold;
-      margin-right: 6px;
-      font-size: 13px;
-    }
-
-    .level-field input {
-      width: 70px;
-      padding: 6px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 13px;
-      margin-right: 6px;
-    }
-
-    .level-save-btn {
-      padding: 5px 8px;
-      border-radius: 6px;
-      border: none;
-      background: #1565c0;
-      color: white;
-      font-size: 12px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    /* MODAL */
-    #modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      z-index: 999;
+    /* Modal */
+    #editModal {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      z-index:999;
     }
 
     .modal-box {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 350px;
-      max-width: 95%;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+      background:white;
+      width:380px;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 3px 12px rgba(0,0,0,0.3);
     }
 
     .modal-box h3 {
-      margin-top: 0;
-      margin-bottom: 12px;
+      margin-top:0;
+      color:#C62828;
     }
 
     .modal-box input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-bottom: 12px;
-      font-size: 15px;
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      margin-bottom:12px;
+      font-size:15px;
+      color:black;
+      background:white;
     }
 
-    .modal-save, .modal-cancel {
-      background: #2e7d32;
-      color: white;
-      padding: 12px;
-      width: 100%;
-      border: none;
-      border-radius: 6px;
-      margin-top: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 15px;
+    .modal-btn {
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border:none;
+      border-radius:6px;
+      font-size:15px;
+      font-weight:bold;
+      cursor:pointer;
     }
 
-    .modal-cancel {
-      background: #444;
-    }
+    .modal-save { background:#2e7d32; color:white; }
+    .modal-close { background:#444; color:white; }
   </style>
 </head>
 
 <body>
-
   <div class="container">
-
     <h1>Inventory Overview</h1>
 
     <nav>
@@ -213,23 +150,28 @@
     </nav>
 
     <div id="inventoryContainer">Loading…</div>
-
-    <button class="add-location-btn" id="addLocationBtn">+ Add Location</button>
-
   </div>
 
-  <!-- MODAL for ADD / MINUS -->
-  <div id="modal">
+
+  <!-- EDIT ITEM MODAL -->
+  <div id="editModal">
     <div class="modal-box">
-      <h3>Adjust Quantity</h3>
-      <label>Enter Quantity</label>
-      <input id="modalQty" type="number" min="1" placeholder="Enter amount">
-      <button id="modalSave" class="modal-save">Confirm</button>
-      <button id="modalCancel" class="modal-cancel">Cancel</button>
+      <h3>Edit Item</h3>
+
+      <label>Item Name</label>
+      <input id="editName">
+
+      <label>Unit</label>
+      <input id="editUnit">
+
+      <label>Size</label>
+      <input id="editSize">
+
+      <button id="saveItemEdit" class="modal-btn modal-save">Save</button>
+      <button id="closeItemEdit" class="modal-btn modal-close">Cancel</button>
     </div>
   </div>
 
   <script type="module" src="./js/inventory.js"></script>
-
 </body>
 </html>
