@@ -12,8 +12,14 @@ import {
 console.log("addStock.js loaded");
 
 const form = document.getElementById("addStockForm");
-const itemNameInput = document.getElementById("itemName");
-const itemQtyInput = document.getElementById("itemQty");
+
+const itemSelect = document.getElementById("itemSelect");
+const existingItemsGroup = document.getElementById("existingItems");
+
+const itemUnit = document.getElementById("itemUnit");
+const itemSize = document.getElementById("itemSize");
+const itemQty = document.getElementById("itemQty");
+
 const locationSelect = document.getElementById("locationSelect");
 const addNewLocationBtn = document.getElementById("addNewLocationBtn");
 
@@ -21,86 +27,134 @@ const parInput = document.getElementById("parDefault");
 const minInput = document.getElementById("minDefault");
 const maxInput = document.getElementById("maxDefault");
 
-/* -------------------------------
-   LOAD ALL EXISTING LOCATIONS
----------------------------------*/
+/* MODAL */
+const newItemModal = document.getElementById("newItemModal");
+const newItemName = document.getElementById("newItemName");
+const newItemUnit = document.getElementById("newItemUnit");
+const newItemSize = document.getElementById("newItemSize");
+const saveNewItem = document.getElementById("saveNewItem");
+const closeNewItem = document.getElementById("closeNewItem");
+
+/* Load existing items */
+async function loadExistingItems() {
+  const snap = await getDocs(collection(db, "inventory"));
+  existingItemsGroup.innerHTML = "";
+
+  snap.forEach(d => {
+    const data = d.data();
+    const opt = document.createElement("option");
+    opt.value = data.displayName;
+    opt.textContent = data.displayName;
+    opt.dataset.unit = data.unit || "";
+    opt.dataset.size = data.size || "";
+    existingItemsGroup.appendChild(opt);
+  });
+}
+loadExistingItems();
+
+/* Load existing locations */
 async function loadLocations() {
   const snap = await getDocs(collection(db, "inventory"));
   const locSet = new Set();
 
   snap.forEach(d => {
-    const data = d.data();
-    const locations = data.locations || {};
-    Object.keys(locations).forEach(loc => locSet.add(loc));
+    const locs = d.data().locations || {};
+    Object.keys(locs).forEach(l => locSet.add(l));
   });
 
-  locationSelect.innerHTML = `<option value="">Select an existing location</option>`;
-
-  [...locSet].sort().forEach(loc => {
-    const opt = document.createElement("option");
-    opt.value = loc;
-    opt.textContent = loc;
-    locationSelect.appendChild(opt);
+  locationSelect.innerHTML = `<option value="">Select a location</option>`;
+  [...locSet].sort().forEach(l => {
+    const o = document.createElement("option");
+    o.value = l;
+    o.textContent = l;
+    locationSelect.appendChild(o);
   });
 }
-
 loadLocations();
 
-/* -------------------------------
-   ADD NEW LOCATION OPTION
----------------------------------*/
-addNewLocationBtn.addEventListener("click", () => {
-  const name = prompt("Enter new location name:");
-  if (!name) return;
+/* Item selection */
+itemSelect.addEventListener("change", async () => {
+  const opt = itemSelect.selectedOptions[0];
 
-  const option = document.createElement("option");
-  option.value = name;
-  option.textContent = name;
-  option.selected = true;
-
-  locationSelect.appendChild(option);
-});
-
-/* -------------------------------
-   FORM SUBMIT: ADD / TOP-UP
----------------------------------*/
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const name = itemNameInput.value.trim();
-  const qty = parseInt(itemQtyInput.value, 10);
-  const loc = locationSelect.value;
-
-  if (!name || !loc) {
-    alert("Item name and location are required.");
+  if (opt.value === "__new") {
+    newItemModal.style.display = "flex";
     return;
   }
 
-  let par = parseInt(parInput.value, 10);
-  let min = parseInt(minInput.value, 10);
-  let max = parseInt(maxInput.value, 10);
+  if (opt.dataset.unit) itemUnit.value = opt.dataset.unit;
+  if (opt.dataset.size) itemSize.value = opt.dataset.size;
+});
+
+/* Add new item modal */
+saveNewItem.addEventListener("click", () => {
+  if (!newItemName.value.trim()) return alert("Enter item name");
+
+  const opt = document.createElement("option");
+  opt.value = newItemName.value.trim();
+  opt.textContent = newItemName.value.trim();
+  opt.dataset.unit = newItemUnit.value.trim();
+  opt.dataset.size = newItemSize.value.trim();
+
+  existingItemsGroup.appendChild(opt);
+  itemSelect.value = opt.value;
+
+  itemUnit.value = newItemUnit.value.trim();
+  itemSize.value = newItemSize.value.trim();
+
+  newItemModal.style.display = "none";
+});
+
+closeNewItem.addEventListener("click", () => {
+  newItemModal.style.display = "none";
+});
+
+/* Add new location */
+addNewLocationBtn.addEventListener("click", () => {
+  const name = prompt("Enter new location:");
+  if (!name) return;
+
+  const opt = document.createElement("option");
+  opt.value = name;
+  opt.textContent = name;
+  locationSelect.appendChild(opt);
+  locationSelect.value = name;
+});
+
+/* Submit Add/Top-Up */
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const name = itemSelect.value.trim();
+  const qty = Number(itemQty.value);
+  const loc = locationSelect.value;
+
+  const unit = itemUnit.value.trim();
+  const size = itemSize.value.trim();
+
+  let par = Number(parInput.value);
+  let min = Number(minInput.value);
+  let max = Number(maxInput.value);
 
   if (isNaN(par)) par = qty;
   if (isNaN(min)) min = Math.floor(qty / 2);
-  if (isNaN(max)) max = qty * 2 || 9999;
+  if (isNaN(max)) max = qty * 2;
 
-  // Find existing item
   const snap = await getDocs(collection(db, "inventory"));
   let existing = null;
 
   snap.forEach(d => {
     const data = d.data();
-    if (data.displayName?.toLowerCase() === name.toLowerCase()) {
+    if (data.displayName.toLowerCase() === name.toLowerCase()) {
       existing = { id: d.id, ...data };
     }
   });
 
+  /* New item */
   if (!existing) {
-    // NEW ITEM
     const newRef = doc(collection(db, "inventory"));
-
     await setDoc(newRef, {
       displayName: name,
+      unit, size,
       defaultPar: par,
       defaultMin: min,
       defaultMax: max,
@@ -110,78 +164,34 @@ form.addEventListener("submit", async (e) => {
     });
 
     await log("add-new-item", name, loc, qty, "Initial setup");
-    alert("New item created.");
-  } else {
-    // EXISTING ITEM
+    alert("New item created");
+  }
+
+  /* Existing item */
+  else {
     const itemRef = doc(db, "inventory", existing.id);
-    const locations = existing.locations || {};
-    const existingLoc = locations[loc];
-    const currentQty = existingLoc?.qty || 0;
+    const currentQty = existing.locations?.[loc]?.qty || 0;
 
-    // Option C3: Ask how to apply levels
-    let choice = prompt(
-      "Apply PAR/MIN/MAX?\n" +
-      "1 = Apply to ALL locations\n" +
-      "2 = Only THIS location\n" +
-      "3 = DO NOT change existing levels"
-    );
-
-    if (!["1", "2", "3"].includes(choice)) choice = "3";
-
-    const updates = {};
-
-    if (choice === "1") {
-      Object.keys(locations).forEach(L => {
-        updates[`locations.${L}.par`] = par;
-        updates[`locations.${L}.min`] = min;
-        updates[`locations.${L}.max`] = max;
-      });
-      updates.defaultPar = par;
-      updates.defaultMin = min;
-      updates.defaultMax = max;
-    }
-
-    if (choice === "2") {
-      updates[`locations.${loc}.par`] = par;
-      updates[`locations.${loc}.min`] = min;
-      updates[`locations.${loc}.max`] = max;
-
-      updates.defaultPar = par;
-      updates.defaultMin = min;
-      updates.defaultMax = max;
-    }
-
-    if (choice === "3") {
-      if (!existingLoc) {
-        updates[`locations.${loc}.par`] = existing.defaultPar ?? par;
-        updates[`locations.${loc}.min`] = existing.defaultMin ?? min;
-        updates[`locations.${loc}.max`] = existing.defaultMax ?? max;
-      }
-    }
-
-    // Add quantity
-    updates[`locations.${loc}.qty`] = currentQty + qty;
+    const updates = {
+      displayName: name,
+      unit, size,
+      [`locations.${loc}.qty`]: currentQty + qty
+    };
 
     await updateDoc(itemRef, updates);
-    await log("topup", existing.displayName, loc, qty, "Stock top-up");
-
-    alert("Item updated.");
+    await log("topup", name, loc, qty, "Stock top-up");
+    alert("Stock updated");
   }
 
   form.reset();
-  loadLocations(); // Refresh location list
+  loadExistingItems();
 });
 
-/* -------------------------------
-   LOGGING
----------------------------------*/
+/* Logging */
 async function log(type, item, loc, qty, reason) {
   await addDoc(collection(db, "inventoryLogs"), {
-    type,
-    item,
-    location: loc,
-    qty,
-    reason,
+    type, item, location: loc,
+    qty, reason,
     timestamp: serverTimestamp()
   });
 }
