@@ -6,125 +6,300 @@
   <link rel="stylesheet" href="./css/styles.css">
 
   <style>
+    body {
+      background: #f4f4f4;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #C62828;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    nav a {
+      display: inline-block;
+      background: #C62828;
+      color: white !important;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    nav a:hover { background: #8E0000; }
+
     .log-card {
       background: #fff;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       margin-bottom: 15px;
     }
+
     .log-header {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
-      margin-bottom: 6px;
     }
+
     .log-meta {
       font-size: 14px;
-      color: #666;
+      color: #555;
       margin-bottom: 10px;
     }
+
     .full-report {
       background: #fafafa;
       padding: 12px;
-      border-radius: 6px;
+      border-radius: 8px;
+      border: 1px solid #eee;
       white-space: pre-wrap;
       font-size: 14px;
-      border: 1px solid #eee;
-      margin-top: 10px;
     }
-    .copy-btn {
-      margin-top: 10px;
+
+    .log-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .copy-btn, .edit-btn, .delete-btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .copy-btn { background: #1565C0; color: white; }
+    .edit-btn { background: #EF6C00; color: white; }
+    .delete-btn { background: #B71C1C; color: white; }
+
+    /* MODAL */
+    #editModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 750px;
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 20px;
+      border-radius: 16px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 28px;
+      font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .modal-title {
+      text-align: center;
+      color: #C62828;
+      font-size: 24px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+      gap: 10px;
+    }
+
+    .step-dot {
+      width: 12px;
+      height: 12px;
+      background: #ccc;
+      border-radius: 50%;
+    }
+
+    .step-dot.active {
+      background: #C62828;
+    }
+
+    .form-step {
+      display: none;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #C62828;
+      border-left: 4px solid #C62828;
+      padding-left: 10px;
+      margin-bottom: 12px;
+      margin-top: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .step-controls {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #C62828;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      background: #bbb;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #editPreviewBox {
+      background: #fafafa;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 20px;
+      border: 1px solid #ddd;
+    }
+
+    #previewText {
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    #editCopyButton {
+      margin-top: 12px;
       background: #1565C0;
       color: white;
       border: none;
-      padding: 10px;
+      padding: 12px;
       width: 100%;
-      font-size: 14px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: bold;
     }
-    .copy-btn:hover {
-      background: #0d47a1;
-    }
+
   </style>
 </head>
 
 <body>
-  <div class="container">
 
-    <h1>Injury Report Logs</h1>
+<div class="container">
 
-    <nav>
-      <a href="index.html">← Back to Dashboard</a>
-    </nav>
+  <h1>Injury Report Logs</h1>
 
-    <div id="logsContainer">
-      Loading reports...
+  <nav>
+    <a href="index.html">← Back to Dashboard</a>
+  </nav>
+
+  <div id="logsContainer">Loading...</div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal">
+  <div class="modal-content">
+
+    <button class="modal-close" id="editCloseBtn">×</button>
+
+    <div class="modal-title">Edit Injury Report</div>
+
+    <!-- Step Dots -->
+    <div class="step-indicator">
+      <div class="step-dot" data-step-dot="0"></div>
+      <div class="step-dot" data-step-dot="1"></div>
+      <div class="step-dot" data-step-dot="2"></div>
+      <div class="step-dot" data-step-dot="3"></div>
+    </div>
+
+    <!-- Steps Container Injected by JS -->
+    <form id="editForm">
+      <div id="editSteps"></div>
+
+      <div class="step-controls">
+        <button type="button" id="prevStepBtn" class="btn-secondary">Back</button>
+        <button type="button" id="nextStepBtn" class="btn-primary">Next</button>
+        <button type="submit" id="saveChangesBtn" class="btn-primary" style="display:none;">Save Changes</button>
+      </div>
+    </form>
+
+    <div id="editPreviewBox">
+      <div style="font-weight:bold; margin-bottom:5px;">📄 Live Preview</div>
+      <div id="previewText">Edit a field to update preview...</div>
+      <button id="editCopyButton">📋 Copy Report</button>
     </div>
 
   </div>
+</div>
 
-  <script type="module">
-
-    import { db } from "./js/app.js";
-    import { 
-      collection, getDocs, orderBy, query 
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-    const logsContainer = document.getElementById("logsContainer");
-
-    async function loadLogs() {
-      logsContainer.textContent = "Loading...";
-
-      try {
-        const q = query(
-          collection(db, "injuryReports"),
-          orderBy("createdAt", "desc")
-        );
-
-        const snapshot = await getDocs(q);
-
-        if (snapshot.empty) {
-          logsContainer.textContent = "No reports found.";
-          return;
-        }
-
-        logsContainer.innerHTML = "";
-
-        snapshot.forEach(doc => {
-          const r = doc.data();
-
-          const card = document.createElement("div");
-          card.className = "log-card";
-
-          card.innerHTML = `
-            <div class="log-header">${r.patientName} (${r.caseType})</div>
-            <div class="log-meta">
-              ${r.timeIn}–${r.timeOut} hrs • ${r.location}
-            </div>
-
-            <div class="full-report">${r.fullText}</div>
-
-            <button class="copy-btn">📋 Copy Report</button>
-          `;
-
-          card.querySelector(".copy-btn").onclick = () => {
-            navigator.clipboard.writeText(r.fullText)
-              .then(() => alert("Report copied!"));
-          };
-
-          logsContainer.appendChild(card);
-        });
-
-      } catch (err) {
-        console.error(err);
-        logsContainer.textContent = "Error loading logs.";
-      }
-    }
-
-    loadLogs();
-
-  </script>
+<script type="module" src="./js/logs.js"></script>
 
 </body>
 </html>
