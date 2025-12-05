@@ -5,103 +5,251 @@
   <title>Transfer Stock</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="./css/styles.css">
-
   <style>
+    body {
+      background: #f4f4f4;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 24px auto;
+      padding: 0 14px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #C62828;
+      margin-bottom: 10px;
+    }
+
+    /* NAV BUTTONS */
+    nav {
+      margin-bottom: 16px;
+    }
+    nav a {
+      display: inline-block;
+      background: #C62828;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-right: 8px;
+      color: white !important;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:hover {
+      background: #8E0000;
+    }
+
+    /* CARD */
     .card {
-      background: white;
+      background: #fff;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 14px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* SECTION HEADERS */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #B71C1C;
+      border-left: 4px solid #B71C1C;
+      padding-left: 10px;
+      margin-bottom: 12px;
+    }
+
+    /* ITEM CARD LIST */
+    .item-list {
+      max-height: 260px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+
+    .item-card {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .item-card:hover {
+      background: #f0f0f0;
+    }
+
+    .item-name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+    }
+    .ok { background: #2e7d32; }
+    .low { background: #ef6c00; }
+    .critical { background: #c62828; }
+    .overstock { background: #1565c0; }
+
+    /* SELECT DROPDOWNS */
+    .form-group {
+      margin-bottom: 14px;
     }
 
     label {
-      font-weight: bold;
-      margin-top: 12px;
       display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 6px;
     }
 
-    input, select, textarea {
+    select, input {
       width: 100%;
       padding: 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      margin-top: 6px;
-      font-size: 15px;
+      font-size: 14px;
+      box-sizing: border-box;
     }
 
-    button {
+    /* STOCK SUMMARY BOX */
+    .summary-box {
+      background: #fff8e1;
+      border-left: 4px solid #ffb300;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .summary-box strong { color: #bf360c; }
+
+    /* SUBMIT BUTTON */
+    .primary-btn {
       width: 100%;
       padding: 14px;
       background: #C62828;
-      border: none;
-      border-radius: 6px;
       color: white;
+      border: none;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: bold;
-      margin-top: 20px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .primary-btn:hover {
+      background: #8E0000;
+    }
+
+    /* CONFIRM MODAL */
+    #confirmModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      width: 95%;
+      max-width: 380px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+
+    .modal-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 8px;
+      border: none;
+      margin-top: 10px;
       cursor: pointer;
     }
 
-    button:hover { background: #8E0000; }
-
-    #qtyInfo {
-      margin-top: 10px;
-      font-size: 14px;
-      font-weight: bold;
-      color: #444;
-    }
-
+    .confirm { background: #2e7d32; color: white; }
+    .cancel { background: #b71c1c; color: white; }
   </style>
 </head>
 
 <body>
-
   <div class="container">
 
     <h1>Transfer Stock</h1>
 
     <nav>
-      <a href="index.html">← Back to Dashboard</a>
-      <a href="inventory.html">View Inventory</a>
+      <a href="index.html">← Dashboard</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="addStock.html">Add Stock</a>
     </nav>
 
+    <!-- ITEM SELECTION -->
     <div class="card">
+      <h2 class="section-title">📦 Select Item to Transfer</h2>
+      <div id="itemList" class="item-list">Loading items...</div>
+    </div>
 
-      <form id="transferForm">
+    <!-- TRANSFER FORM -->
+    <div class="card">
+      <h2 class="section-title">🔄 Transfer Details</h2>
 
-        <label>Select Item</label>
-        <select id="itemSelect" required>
-          <option value="">Select Item</option>
-        </select>
+      <div class="form-group">
+        <label>From Location</label>
+        <select id="fromLocation"></select>
+      </div>
 
-        <label>Transfer From (Source Location)</label>
-        <select id="fromLocation" required>
-          <option value="">Select Location</option>
-        </select>
+      <div class="form-group">
+        <label>To Location</label>
+        <select id="toLocation"></select>
+      </div>
 
-        <label>Transfer To (Destination Location)</label>
-        <select id="toLocation" required>
-          <option value="">Select Location</option>
-        </select>
+      <div class="form-group">
+        <label>Quantity to Transfer</label>
+        <input id="transferQty" type="number" min="1" placeholder="e.g. 5">
+      </div>
 
-        <div id="qtyInfo">Select item + source to view quantity.</div>
+      <!-- Stock summary -->
+      <div id="summaryBox" class="summary-box"></div>
 
-        <label>Transfer Quantity</label>
-        <input id="transferQty" type="number" min="1" required>
+      <button id="previewTransfer" class="primary-btn">Review Transfer</button>
+    </div>
 
-        <label>Reason (Required)</label>
-        <textarea id="reason" placeholder="Explain why transfer is required..." required></textarea>
+  </div>
 
-        <button type="submit">Confirm Transfer</button>
+  <!-- CONFIRM MODAL -->
+  <div id="confirmModal">
+    <div class="modal-box">
+      <h3>Confirm Transfer</h3>
+      <p id="confirmText"></p>
 
-      </form>
-
+      <button id="confirmBtn" class="modal-btn confirm">Confirm</button>
+      <button id="cancelBtn" class="modal-btn cancel">Cancel</button>
     </div>
   </div>
 
   <script type="module" src="./js/transfer.js"></script>
-
 </body>
 </html>
