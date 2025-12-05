@@ -4,30 +4,36 @@ import {
   doc,
   updateDoc,
   deleteField,
-  deleteDoc,
-  onSnapshot
+  onSnapshot,
+  addDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 console.log("inventory.js loaded");
 
+// UI Refs
 const container = document.getElementById("inventoryContainer");
 
-const editModal = document.getElementById("editModal");
-const editName = document.getElementById("editName");
-const editUnit = document.getElementById("editUnit");
-const editSize = document.getElementById("editSize");
-const saveItemEdit = document.getElementById("saveItemEdit");
-const closeItemEdit = document.getElementById("closeItemEdit");
+// Modal refs
+const modal = document.getElementById("modal");
+const modalQty = document.getElementById("modalQty");
+const modalSave = document.getElementById("modalSave");
+const modalCancel = document.getElementById("modalCancel");
 
+// State
 let allItems = [];
-let editingItemID = null;
+let editItemId = null;
+let editLoc = null;
+let actionType = null;
 
-/* ---------------- STATUS LOGIC ---------------- */
+/* ----------------------------------------------------------
+   STATUS BADGE LOGIC
+---------------------------------------------------------- */
 function getStatus(qty, par, min, max) {
   qty = Number(qty);
   par = Number(par ?? 0);
   min = Number(min ?? 0);
-  max = Number(max ?? 99999);
+  max = Number(max ?? 9999);
 
   if (qty <= min) return { label: "Critical", cls: "critical" };
   if (qty < par) return { label: "Low", cls: "low" };
@@ -35,142 +41,229 @@ function getStatus(qty, par, min, max) {
   return { label: "OK", cls: "ok" };
 }
 
-/* ---------------- RENDER INVENTORY ---------------- */
+/* ----------------------------------------------------------
+   RENDER INVENTORY PER LOCATION
+---------------------------------------------------------- */
 function renderInventory() {
   container.innerHTML = "";
 
+  const locMap = {};
+
   allItems.forEach(item => {
+    const locs = item.locations || {};
+    Object.keys(locs).forEach(locKey => {
+      if (!locMap[locKey]) locMap[locKey] = [];
+      locMap[locKey].push({
+        id: item.id,
+        name: item.displayName,
+        qty: locs[locKey].qty,
+        par: locs[locKey].par,
+        min: locs[locKey].min,
+        max: locs[locKey].max
+      });
+    });
+  });
+
+  // Render each location card
+  Object.keys(locMap).sort().forEach(loc => {
     const card = document.createElement("div");
     card.className = "location-card";
 
-    let html = `
-      <div class="item-title">${item.displayName}</div>
-      <div class="item-meta">
-        Unit: ${item.unit || "-"} &nbsp; | &nbsp; Size: ${item.size || "-"}
-        <br>
-        <button class="action-btn edit-btn" data-edit="${item.id}">Edit Item</button>
-        <button class="action-btn delete-btn" data-deleteitem="${item.id}">Delete Item</button>
-      </div>
+    let html = `<div class="location-header">${loc}</div>`;
 
-      <table>
-        <tr>
-          <th>Location</th>
-          <th>Qty</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-    `;
-
-    const locs = Object.keys(item.locations || {}).sort();
-    locs.forEach(loc => {
-      const L = item.locations[loc];
-      const st = getStatus(L.qty, L.par, L.min, L.max);
+    locMap[loc].sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
+      const status = getStatus(item.qty, item.par, item.min, item.max);
+      const detailsId = `${item.id}__${loc}`;
 
       html += `
-        <tr>
-          <td>${loc}</td>
-          <td>${L.qty}</td>
-          <td><span class="badge ${st.cls}">${st.label}</span></td>
-          <td>
-            <button class="action-btn add-btn" data-type="add" data-item="${item.id}" data-loc="${loc}">+</button>
-            <button class="action-btn minus-btn" data-type="minus" data-item="${item.id}" data-loc="${loc}">−</button>
-            <button class="action-btn delete-btn" data-type="deleteLoc" data-item="${item.id}" data-loc="${loc}">Del</button>
-          </td>
-        </tr>
+        <div class="item-row">
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-qty">
+              Qty: ${item.qty} • <span class="badge ${status.cls}">${status.label}</span>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-add" data-type="add" data-id="${item.id}" data-loc="${loc}">+</button>
+            <button class="btn btn-minus" data-type="minus" data-id="${item.id}" data-loc="${loc}">−</button>
+            <button class="btn btn-del" data-type="delete" data-id="${item.id}" data-loc="${loc}">🗑</button>
+            <button class="btn btn-details" data-type="details" data-key="${detailsId}">⋯</button>
+          </div>
+        </div>
+
+        <div class="details-panel" id="details-${detailsId}">
+          <div class="details-row">
+            <label>PAR:</label>
+            <input type="number" value="${item.par}" 
+                   data-id="${item.id}" data-loc="${loc}" data-field="par">
+            <button class="save-level-btn" data-save="true">Save</button>
+          </div>
+
+          <div class="details-row">
+            <label>MIN:</label>
+            <input type="number" value="${item.min}" 
+                   data-id="${item.id}" data-loc="${loc}" data-field="min">
+            <button class="save-level-btn" data-save="true">Save</button>
+          </div>
+
+          <div class="details-row">
+            <label>MAX:</label>
+            <input type="number" value="${item.max}" 
+                   data-id="${item.id}" data-loc="${loc}" data-field="max">
+            <button class="save-level-btn" data-save="true">Save</button>
+          </div>
+        </div>
       `;
     });
 
-    html += `</table>`;
     card.innerHTML = html;
     container.appendChild(card);
   });
 }
 
-/* ---------------- FIRESTORE LIVE LISTENER ---------------- */
+/* ----------------------------------------------------------
+   FIRESTORE LISTENER
+---------------------------------------------------------- */
 onSnapshot(collection(db, "inventory"), snap => {
   allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderInventory();
 });
 
-/* ---------------- CLICK HANDLER ---------------- */
+/* ----------------------------------------------------------
+   MODAL HANDLING
+---------------------------------------------------------- */
+modalCancel.onclick = () => (modal.style.display = "none");
+
+modalSave.onclick = async () => {
+  const amount = Number(modalQty.value);
+  if (!amount || amount < 1) {
+    alert("Enter a valid number.");
+    return;
+  }
+
+  const item = allItems.find(i => i.id === editItemId);
+  if (!item) return;
+
+  const itemRef = doc(db, "inventory", editItemId);
+  const currentQty = item.locations?.[editLoc]?.qty ?? 0;
+  let newQty = currentQty;
+
+  // ADD
+  if (actionType === "add") {
+    newQty = currentQty + amount;
+
+    await updateDoc(itemRef, {
+      [`locations.${editLoc}.qty`]: newQty
+    });
+
+    await log("increase", item.displayName, editLoc, amount, "Manual add");
+  }
+
+  // MINUS
+  if (actionType === "minus") {
+    const reason = prompt("Reason for reducing stock?");
+    if (!reason) return alert("Reason required.");
+
+    newQty = Math.max(0, currentQty - amount);
+
+    await updateDoc(itemRef, {
+      [`locations.${editLoc}.qty`]: newQty
+    });
+
+    await log("decrease", item.displayName, editLoc, -amount, reason);
+  }
+
+  modal.style.display = "none";
+};
+
+/* ----------------------------------------------------------
+   BUTTON HANDLERS
+---------------------------------------------------------- */
 document.addEventListener("click", async e => {
   const type = e.target.dataset.type;
-  const itemId = e.target.dataset.item;
-  const loc = e.target.dataset.loc;
-
-  /* ----- OPEN EDIT MODAL ----- */
-  if (e.target.dataset.edit) {
-    const item = allItems.find(i => i.id === e.target.dataset.edit);
-    editingItemID = item.id;
-    editName.value = item.displayName;
-    editUnit.value = item.unit || "";
-    editSize.value = item.size || "";
-    editModal.style.display = "flex";
-    return;
-  }
-
-  /* ----- DELETE ENTIRE ITEM ----- */
-  if (e.target.dataset.deleteitem) {
-    const id = e.target.dataset.deleteitem;
-    const item = allItems.find(i => i.id === id);
-
-    if (!confirm(`⚠️ Delete entire item:\n\n${item.displayName}\n\nThis cannot be undone.`))
-      return;
-
-    await deleteDoc(doc(db, "inventory", id));
-    alert("Item deleted.");
-    return;
-  }
 
   if (!type) return;
 
-  const item = allItems.find(i => i.id === itemId);
-  const ref = doc(db, "inventory", itemId);
+  const itemId = e.target.dataset.id;
+  const loc = e.target.dataset.loc;
 
-  /* ----- ADD QTY ----- */
-  if (type === "add") {
-    const q = prompt("Add how many?");
-    if (!q) return;
-    const qty = Number(q);
-    await updateDoc(ref, {
-      [`locations.${loc}.qty`]: (item.locations[loc]?.qty || 0) + qty
-    });
+  // ADD / MINUS (open modal)
+  if (type === "add" || type === "minus") {
+    actionType = type;
+    editItemId = itemId;
+    editLoc = loc;
+    modalQty.value = "";
+    modal.style.display = "flex";
     return;
   }
 
-  /* ----- REDUCE QTY ----- */
-  if (type === "minus") {
-    const q = prompt("Reduce by how many?");
-    if (!q) return;
-    const qty = Number(q);
-    await updateDoc(ref, {
-      [`locations.${loc}.qty`]: Math.max(0, (item.locations[loc]?.qty || 0) - qty)
+  // DELETE
+  if (type === "delete") {
+    const item = allItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    if (!confirm(`Delete "${item.displayName}" from ${loc}?`)) return;
+
+    const itemRef = doc(db, "inventory", itemId);
+
+    await updateDoc(itemRef, {
+      [`locations.${loc}`]: deleteField()
     });
+
+    await log("delete", item.displayName, loc, 0, "Deleted from location");
     return;
   }
 
-  /* ----- DELETE LOCATION ----- */
-  if (type === "deleteLoc") {
-    if (!confirm(`Delete location "${loc}"?`)) return;
-    await updateDoc(ref, { [`locations.${loc}`]: deleteField() });
+  // DETAILS PANEL TOGGLE
+  if (type === "details") {
+    const key = e.target.dataset.key;
+    const panel = document.getElementById(`details-${key}`);
+    if (panel) {
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
+    }
     return;
   }
 });
 
-/* ---------------- SAVE ITEM EDIT ---------------- */
-saveItemEdit.addEventListener("click", async () => {
-  const ref = doc(db, "inventory", editingItemID);
+/* ----------------------------------------------------------
+   SAVE PAR/MIN/MAX
+---------------------------------------------------------- */
+document.addEventListener("click", async e => {
+  if (!e.target.dataset.save) return;
 
-  await updateDoc(ref, {
-    displayName: editName.value.trim(),
-    unit: editUnit.value.trim(),
-    size: editSize.value.trim(),
+  const row = e.target.closest(".details-row");
+  const input = row.querySelector("input");
+
+  const field = input.dataset.field;
+  const itemId = input.dataset.id;
+  const loc = input.dataset.loc;
+  const newVal = Number(input.value);
+
+  if (isNaN(newVal) || newVal < 0) return alert("Invalid number.");
+
+  const itemRef = doc(db, "inventory", itemId);
+
+  await updateDoc(itemRef, {
+    [`locations.${loc}.${field}`]: newVal
   });
 
-  editModal.style.display = "none";
+  const item = allItems.find(i => i.id === itemId);
+
+  await log(`update-${field}`, item.displayName, loc, 0, `${field.toUpperCase()} updated`);
+  alert(`${field.toUpperCase()} updated.`);
 });
 
-/* CLOSE MODAL */
-closeItemEdit.addEventListener("click", () => {
-  editModal.style.display = "none";
-});
+/* ----------------------------------------------------------
+   LOGGING FUNCTION
+---------------------------------------------------------- */
+async function log(type, item, location, qty, reason) {
+  await addDoc(collection(db, "inventoryLogs"), {
+    type,
+    item,
+    location,
+    qty,
+    reason,
+    timestamp: serverTimestamp()
+  });
+}
