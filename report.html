@@ -3,635 +3,291 @@
 <head>
   <meta charset="UTF-8" />
   <title>Create Injury Report</title>
-  <link rel="stylesheet" href="./css/styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="./css/styles.css">
 
   <style>
     body {
-      background: #f4f4f4;
-      margin: 0;
+      background: #f5f5f5;
       font-family: Arial, sans-serif;
     }
 
     .container {
-      max-width: 700px;
-      margin: 30px auto;
+      max-width: 480px;
+      margin: 0 auto;
       padding: 20px;
     }
 
-    /* Small back button */
+    h1 {
+      color: #C62828;
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
     nav {
-      margin-bottom: 15px;
+      margin-bottom: 16px;
+      text-align: center;
     }
 
     nav a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
       background: #C62828;
-      color: white !important;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
       text-decoration: none;
-      font-size: 22px;
-      border-radius: 14px;
-      font-weight: bold;
-      transition: 0.2s ease;
     }
 
-    nav a:hover {
-      background: #8E0000;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    /* STEP INDICATOR */
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
     }
 
-    h1 {
+    .step {
+      width: 22%;
+      padding: 8px 0;
       text-align: center;
-      color: #C62828;
-      margin-bottom: 15px;
-      font-size: 28px;
+      background: #e0e0e0;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: bold;
+      color: #666;
     }
 
+    .active-step {
+      background: #C62828;
+      color: white;
+    }
+
+    /* CARD */
     .card {
       background: white;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
 
-    /* Section titles */
     .section-title {
-      margin-top: 10px;
-      margin-bottom: 16px;
-      font-size: 20px;
+      font-size: 17px;
       font-weight: bold;
-      color: #C62828;
-      border-left: 5px solid #C62828;
-      padding-left: 12px;
+      color: #333;
+      margin-bottom: 12px;
+      border-left: 4px solid #C62828;
+      padding-left: 10px;
     }
 
     .form-group {
       margin-bottom: 14px;
     }
 
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
+    label {
       font-size: 14px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 10px 12px;
+      padding: 10px;
       font-size: 14px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      outline: none;
-      transition: 0.2s;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: #C62828;
-      box-shadow: 0 0 0 2px rgba(198,40,40,0.2);
-    }
-
-    /* Two-column grid for related fields */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-    }
-
-    /* Wizard steps */
-    .form-step {
-      display: none;
-    }
-
-    .form-step.active {
-      display: block;
-    }
-
-    .step-indicator {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .step-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: #ccc;
-    }
-
-    .step-dot.active {
-      background: #C62828;
-    }
-
-    .step-controls {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-
-    .step-controls button {
-      flex: 1;
-      min-width: 120px;
-    }
-
-    .btn-secondary {
-      background: #EEEEEE;
-      color: #333;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 15px;
-    }
-
-    .btn-secondary:hover {
-      background: #E0E0E0;
-    }
-
-    .btn-primary {
-      background: #C62828;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 15px;
-    }
-
-    .btn-primary:hover {
-      background: #8E0000;
-    }
-
-    /* Highlight invalid required fields */
-    .input-error {
-      border-color: #C62828 !important;
-      background: #FFEBEE;
-    }
-
-    /* Preview box */
-    #previewBox {
       background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-      margin-top: 25px;
-      white-space: pre-wrap;
-      font-size: 15px;
-      line-height: 1.5;
     }
 
-    #previewTitle {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #C62828;
-    }
+    textarea { resize: vertical; }
 
-    #copyButton {
-      margin-top: 15px;
-      background: #1565C0;
-      border: none;
-      color: white;
-      padding: 12px;
+    /* BUTTONS */
+    .btn {
       width: 100%;
+      padding: 14px;
+      margin-top: 10px;
       font-size: 16px;
       font-weight: bold;
-      border-radius: 8px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    #copyButton:hover {
-      background: #0d47a1;
+    .next-btn {
+      background: #C62828;
+      color: white;
+    }
+    .next-btn:hover { background: #8E0000; }
+
+    .back-btn {
+      background: #BDBDBD;
+      color: #333;
+    }
+
+    /* PREVIEW */
+    #previewBox {
+      background: white;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
+<div class="container">
 
-    <nav>
-      <a href="index.html">←</a>
-    </nav>
+  <h1>Create Injury Report</h1>
 
-    <h1>Create Injury Report</h1>
+  <nav>
+    <a href="index.html">← Dashboard</a>
+    <a href="reportLogs.html">Logs</a>
+  </nav>
 
-    <div class="card">
-      <!-- Step indicator -->
-      <div class="step-indicator">
-        <div class="step-dot active" data-step-dot="0"></div>
-        <div class="step-dot" data-step-dot="1"></div>
-        <div class="step-dot" data-step-dot="2"></div>
-        <div class="step-dot" data-step-dot="3"></div>
-      </div>
-
-      <form id="injuryForm">
-
-        <!-- STEP 1: Time + Patient -->
-        <div class="form-step active" data-step="0">
-          <h2 class="section-title">⏱ Time Details</h2>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label>Time In (#### hrs):</label>
-              <input id="timeIn" type="text" placeholder="1600" required>
-            </div>
-
-            <div class="form-group">
-              <label>Time Out (#### hrs):</label>
-              <input id="timeOut" type="text" placeholder="1610" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Calculated Duration (auto):</label>
-            <input id="durationDisplay" type="text" readonly placeholder="Will auto-calculate" />
-          </div>
-
-          <h2 class="section-title">🧑‍⚕️ Patient Information</h2>
-
-          <div class="form-group">
-            <label>Patient Name:</label>
-            <input id="patientName" type="text" required>
-          </div>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label>Gender:</label>
-              <select id="gender">
-                <option>Male</option>
-                <option>Female</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Age:</label>
-              <input id="age" type="number" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Contact No.:</label>
-            <input id="contact" type="text" placeholder="Optional">
-          </div>
-        </div>
-
-        <!-- STEP 2: Case Info + MOI -->
-        <div class="form-step" data-step="1">
-          <h2 class="section-title">📌 Case Information</h2>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label>Case Type:</label>
-              <select id="caseType">
-                <option>P3</option>
-                <option>P2</option>
-                <option>P1</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Location (Event Area):</label>
-              <input id="location" type="text" placeholder="Walk-In @ EP / Call-Out @ Starbucks" required>
-            </div>
-          </div>
-
-          <h2 class="section-title">⚠️ Mechanism of Injury (MOI)</h2>
-
-          <div class="form-group">
-            <label>Quick MOI Template (optional):</label>
-            <select id="moiTemplate">
-              <option value="">Select common MOI...</option>
-              <option value="Patient slipped and fell on level ground.">Slip & fall</option>
-              <option value="Patient sustained a cut from a sharp object.">Cut / laceration</option>
-              <option value="Patient twisted ankle during sports activity.">Sports sprain / strain</option>
-              <option value="Patient experienced dizziness and near collapse.">Dizziness / near faint</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>MOI Description:</label>
-            <textarea id="moi" rows="3" placeholder="Describe how injury happened..." required></textarea>
-          </div>
-        </div>
-
-        <!-- STEP 3: Treatment -->
-        <div class="form-step" data-step="2">
-          <h2 class="section-title">🩹 Treatment Provided</h2>
-
-          <div class="form-group">
-            <label>Quick Treatment Template (optional):</label>
-            <select id="treatmentTemplate">
-              <option value="">Select common treatment...</option>
-              <option value="Wound cleaned with saline. Plaster applied.">Minor wound cleaning & plaster</option>
-              <option value="Area rested and elevated. Ice pack applied. Compression bandage used.">RICE (Rest, Ice, Compression, Elevation)</option>
-              <option value="Bleeding controlled with direct pressure and dressing.">Bleeding control & dressing</option>
-              <option value="Vital signs monitored and reassessed. Patient reassured.">Monitoring & reassurance</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Treatment:</label>
-            <textarea id="treatment" rows="3" placeholder="Describe treatment done..." required></textarea>
-          </div>
-        </div>
-
-        <!-- STEP 4: Discharge -->
-        <div class="form-step" data-step="3">
-          <h2 class="section-title">🚑 Discharge Method</h2>
-
-          <div class="form-group">
-            <label>Discharge Method:</label>
-            <select id="discharge">
-              <option value="self">Self-discharged and continued with activity</option>
-              <option value="ambulance">Conveyed by Ambulance</option>
-              <option value="other">Other (manual input)</option>
-            </select>
-          </div>
-
-          <div id="ambulanceFields" style="display:none;">
-            <div class="grid-2">
-              <div class="form-group">
-                <label>Ambulance Alpha No. (3 digits):</label>
-                <input id="alphaNo" type="number" maxlength="3" placeholder="e.g., 123">
-              </div>
-
-              <div class="form-group">
-                <label>Receiving Hospital:</label>
-                <input id="hospital" type="text" placeholder="e.g., NUH, NTFGH">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Paramedic Rank & Name:</label>
-              <input id="paramedic" type="text" placeholder="e.g., SGT Lim">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Other Discharge (Optional):</label>
-            <input id="dischargeOther" type="text" placeholder="Only if 'Other' is selected">
-          </div>
-        </div>
-
-        <!-- Wizard controls -->
-        <div class="step-controls">
-          <button type="button" id="prevStepBtn" class="btn-secondary">Back</button>
-          <button type="button" id="nextStepBtn" class="btn-primary">Next</button>
-          <button type="submit" id="submitBtn" class="btn-primary" style="display:none;">Submit Report</button>
-        </div>
-
-      </form>
-    </div>
-
-    <!-- Preview -->
-    <div id="previewBox">
-      <div id="previewTitle">📄 Generated Report (Copy & Paste)</div>
-      <div id="previewText">Fill in the form to generate report...</div>
-      <button id="copyButton">📋 Copy Report</button>
-    </div>
-
+  <!-- STEP BAR -->
+  <div class="step-indicator">
+    <div class="step active-step" id="stepLabel1">Patient</div>
+    <div class="step" id="stepLabel2">Injury</div>
+    <div class="step" id="stepLabel3">Discharge</div>
+    <div class="step" id="stepLabel4">Review</div>
   </div>
 
-  <!-- Inline JS for wizard + preview + smart logic -->
-  <script>
-    function v(id) {
-      return document.getElementById(id)?.value || "";
-    }
+  <!-- FORM (multi-step) -->
+  <form id="injuryForm">
 
-    /* Time parsing & duration */
-    function parseTime(str) {
-      if (!str) return null;
-      const clean = str.trim();
-      if (!/^\\d{3,4}$/.test(clean)) return null;
-      const padded = clean.padStart(4, "0");
-      const h = parseInt(padded.slice(0, 2), 10);
-      const m = parseInt(padded.slice(2), 10);
-      if (h > 23 || m > 59) return null;
-      return h * 60 + m;
-    }
+    <!-- STEP 1 -->
+    <div class="card step-card" id="step1">
+      <div class="section-title">Patient & Time</div>
 
-    function getDurationText() {
-      const tIn = parseTime(v("timeIn"));
-      const tOut = parseTime(v("timeOut"));
-      if (tIn == null || tOut == null) return "";
+      <div class="form-group">
+        <label>Time In (HHMM hrs)</label>
+        <input id="timeIn" required>
+      </div>
 
-      let diff = tOut - tIn;
-      if (diff < 0) diff += 24 * 60; // handle crossing midnight
+      <div class="form-group">
+        <label>Time Out (HHMM hrs)</label>
+        <input id="timeOut" required>
+      </div>
 
-      if (diff === 0) return "0 minutes";
+      <div class="form-group">
+        <label>Patient Name (Include Surname)</label>
+        <input id="patientName" required>
+      </div>
 
-      const hours = Math.floor(diff / 60);
-      const mins = diff % 60;
-      const parts = [];
-      if (hours) parts.push(hours + " hour" + (hours !== 1 ? "s" : ""));
-      if (mins) parts.push(mins + " minute" + (mins !== 1 ? "s" : ""));
-      return parts.join(" ");
-    }
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="gender">
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      </div>
 
-    /* Show/hide ambulance fields */
-    function toggleAmbulance() {
-      const d = v("discharge");
-      document.getElementById("ambulanceFields").style.display =
-        d === "ambulance" ? "block" : "none";
-    }
+      <div class="form-group">
+        <label>Age</label>
+        <input id="age" type="number" required>
+      </div>
 
-    document.getElementById("discharge").addEventListener("change", () => {
-      toggleAmbulance();
-      updatePreview();
-    });
+      <div class="form-group">
+        <label>Contact No. (Optional)</label>
+        <input id="contact">
+      </div>
 
-    /* Auto-suggest case type based on MOI */
-    function autoSuggestCaseType() {
-      const moiText = v("moi").toLowerCase();
-      const caseTypeSelect = document.getElementById("caseType");
+      <button type="button" class="btn next-btn" onclick="nextStep()">Next</button>
+    </div>
 
-      if (caseTypeSelect.dataset.userChanged === "true") return;
+    <!-- STEP 2 -->
+    <div class="card step-card" id="step2" style="display:none;">
+      <div class="section-title">Injury Details</div>
 
-      let suggested = "P3";
-      if (/unconscious|no response|not breathing|chest pain|seizure|seizing|severe bleeding|amputation/.test(moiText)) {
-        suggested = "P1";
-      } else if (/head injury|fracture|dislocation|deep cut|laceration|burn|severe pain/.test(moiText)) {
-        suggested = "P2";
-      }
+      <div class="form-group">
+        <label>Case Type</label>
+        <select id="caseType">
+          <option>P3</option>
+          <option>P2</option>
+          <option>P1</option>
+        </select>
+      </div>
 
-      caseTypeSelect.value = suggested;
-    }
+      <div class="form-group">
+        <label>Location (free text)</label>
+        <input id="location" required>
+      </div>
 
-    document.getElementById("caseType").addEventListener("change", () => {
-      document.getElementById("caseType").dataset.userChanged = "true";
-      updatePreview();
-    });
+      <div class="form-group">
+        <label>Mechanism of Injury (MOI)</label>
+        <textarea id="moi" rows="3" required></textarea>
+      </div>
 
-    /* Discharge text for preview */
-    function dischargeText() {
-      const d = v("discharge");
-      if (d === "self") {
-        return "Self-discharged and continued with activity";
-      }
-      if (d === "ambulance") {
-        return `Sent by Alpha ${v("alphaNo")} to ${v("hospital")}, handed over to ${v("paramedic")}`;
-      }
-      if (d === "other") {
-        return v("dischargeOther");
-      }
-      return "";
-    }
+      <div class="form-group">
+        <label>Treatment</label>
+        <textarea id="treatment" rows="3" required></textarea>
+      </div>
 
-    /* Preview builder */
-    function updatePreview() {
-      const durationText = getDurationText();
-      const durationLine = durationText ? `Total duration: ${durationText}\\n` : "";
+      <button type="button" class="btn back-btn" onclick="prevStep()">Back</button>
+      <button type="button" class="btn next-btn" onclick="nextStep()">Next</button>
+    </div>
 
-      document.getElementById("durationDisplay").value = durationText || "";
+    <!-- STEP 3 -->
+    <div class="card step-card" id="step3" style="display:none;">
+      <div class="section-title">Discharge</div>
 
-      const report =
-`Time in: ${v("timeIn")} hrs
-Time out: ${v("timeOut")} hrs
-${durationLine}Patient’s name: ${v("patientName")}
-Gender: ${v("gender")}
-Age: ${v("age")}
-Contact no.: ${v("contact")}
+      <div class="form-group">
+        <label>Discharge Method</label>
+        <select id="discharge">
+          <option value="self">Self-discharged and continued with activity</option>
+          <option value="ambulance">Conveyed by Ambulance</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
 
-Case Type : ${v("caseType")}
-Location : ${v("location")}
+      <div id="ambulanceFields" style="display:none;">
+        <div class="form-group">
+          <label>Ambulance Alpha No.</label>
+          <input id="alphaNo">
+        </div>
 
-Mechanism (MOI) & Treatment :
-${v("moi")}
+        <div class="form-group">
+          <label>Receiving Hospital</label>
+          <input id="hospital">
+        </div>
 
-${v("treatment")}
+        <div class="form-group">
+          <label>Paramedic Details</label>
+          <input id="paramedic">
+        </div>
+      </div>
 
-Discharge Method :
-${dischargeText()}.`;
+      <div class="form-group">
+        <label>Other Discharge (Optional)</label>
+        <input id="dischargeOther">
+      </div>
 
-      document.getElementById("previewText").textContent = report;
-    }
+      <button type="button" class="btn back-btn" onclick="prevStep()">Back</button>
+      <button type="button" class="btn next-btn" onclick="nextStep()">Next</button>
+    </div>
 
-    /* MOI template helper */
-    document.getElementById("moiTemplate").addEventListener("change", (e) => {
-      const val = e.target.value;
-      if (!val) return;
-      const field = document.getElementById("moi");
-      if (!field.value.trim()) {
-        field.value = val;
-      } else {
-        field.value = field.value.trim() + (field.value.trim().endsWith(".") ? " " : ". ") + val;
-      }
-      autoSuggestCaseType();
-      updatePreview();
-    });
+    <!-- STEP 4 -->
+    <div class="card step-card" id="step4" style="display:none;">
+      <div class="section-title">Review Report</div>
 
-    /* Treatment template helper */
-    document.getElementById("treatmentTemplate").addEventListener("change", (e) => {
-      const val = e.target.value;
-      if (!val) return;
-      const field = document.getElementById("treatment");
-      if (!field.value.trim()) {
-        field.value = val;
-      } else {
-        field.value = field.value.trim() + (field.value.trim().endsWith(".") ? " " : ". ") + val;
-      }
-      updatePreview();
-    });
+      <div id="previewBox"></div>
 
-    /* Bind inputs to preview */
-    [
-      "timeIn","timeOut","patientName","gender","age","contact",
-      "caseType","location","moi","treatment",
-      "discharge","dischargeOther","alphaNo","hospital","paramedic"
-    ].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener("input", () => {
-        if (id === "moi") autoSuggestCaseType();
-        updatePreview();
-      });
-    });
+      <button id="copyButton" type="button" class="btn back-btn">Copy</button>
+      <button type="submit" class="btn next-btn">Save</button>
 
-    toggleAmbulance();
-    updatePreview();
+      <button type="button" class="btn back-btn" onclick="prevStep()">Back</button>
+    </div>
 
-    // Copy button
-    document.getElementById("copyButton").onclick = () => {
-      navigator.clipboard.writeText(document.getElementById("previewText").textContent)
-        .then(() => alert("Report copied to clipboard!"));
-    };
+  </form>
+</div>
 
-    /* Wizard logic */
-    const steps = Array.from(document.querySelectorAll(".form-step"));
-    const dots = Array.from(document.querySelectorAll("[data-step-dot]"));
-    let currentStep = 0;
-
-    const prevBtn = document.getElementById("prevStepBtn");
-    const nextBtn = document.getElementById("nextStepBtn");
-    const submitBtn = document.getElementById("submitBtn");
-
-    function showStep(index) {
-      steps.forEach((step, i) => {
-        step.classList.toggle("active", i === index);
-      });
-      dots.forEach((dot, i) => {
-        dot.classList.toggle("active", i === index);
-      });
-
-      prevBtn.style.display = index === 0 ? "none" : "inline-block";
-      nextBtn.style.display = index === steps.length - 1 ? "none" : "inline-block";
-      submitBtn.style.display = index === steps.length - 1 ? "inline-block" : "none";
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function validateStep(index) {
-      const stepEl = steps[index];
-      let valid = true;
-      const requiredFields = stepEl.querySelectorAll("[required]");
-
-      requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-          field.classList.add("input-error");
-          valid = false;
-        } else {
-          field.classList.remove("input-error");
-        }
-      });
-
-      if (!valid) {
-        alert("Please fill in all required fields in this section before continuing.");
-      }
-
-      return valid;
-    }
-
-    prevBtn.addEventListener("click", () => {
-      if (currentStep > 0) {
-        currentStep--;
-        showStep(currentStep);
-      }
-    });
-
-    nextBtn.addEventListener("click", () => {
-      if (!validateStep(currentStep)) return;
-      if (currentStep < steps.length - 1) {
-        currentStep++;
-        showStep(currentStep);
-      }
-    });
-
-    showStep(currentStep);
-  </script>
-
-  <!-- Firestore saving logic -->
-  <script type="module" src="./js/report.js"></script>
+<script type="module" src="./js/report.js"></script>
 
 </body>
 </html>
