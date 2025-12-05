@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   setDoc,
   updateDoc,
   addDoc,
@@ -11,150 +12,116 @@ import {
 
 console.log("addStock.js loaded");
 
+// DOM refs
 const form = document.getElementById("addStockForm");
-
-const itemSelect = document.getElementById("itemSelect");
-const existingItemsGroup = document.getElementById("existingItems");
-
-const itemUnit = document.getElementById("itemUnit");
-const itemSize = document.getElementById("itemSize");
-const itemQty = document.getElementById("itemQty");
-
+const itemSelect = document.getElementById("itemNameSelect");
+const itemNameInput = document.getElementById("itemName");
+const qtyInput = document.getElementById("itemQty");
 const locationSelect = document.getElementById("locationSelect");
 const addNewLocationBtn = document.getElementById("addNewLocationBtn");
+
+const advToggle = document.getElementById("advToggle");
+const advSection = document.getElementById("advSection");
 
 const parInput = document.getElementById("parDefault");
 const minInput = document.getElementById("minDefault");
 const maxInput = document.getElementById("maxDefault");
 
-/* MODAL */
-const newItemModal = document.getElementById("newItemModal");
-const newItemName = document.getElementById("newItemName");
-const newItemUnit = document.getElementById("newItemUnit");
-const newItemSize = document.getElementById("newItemSize");
-const saveNewItem = document.getElementById("saveNewItem");
-const closeNewItem = document.getElementById("closeNewItem");
+let itemNameMap = {}; // id -> displayName
 
-/* Load existing items */
-async function loadExistingItems() {
+/* -------------------- Load existing items -------------------- */
+async function loadItems() {
   const snap = await getDocs(collection(db, "inventory"));
-  existingItemsGroup.innerHTML = "";
+  itemSelect.innerHTML = `<option value="">Select existing item</option>`;
+  itemNameMap = {};
 
-  snap.forEach(d => {
+  snap.forEach((d) => {
     const data = d.data();
+    itemNameMap[d.id] = data.displayName;
     const opt = document.createElement("option");
-    opt.value = data.displayName;
+    opt.value = d.id;
     opt.textContent = data.displayName;
-    opt.dataset.unit = data.unit || "";
-    opt.dataset.size = data.size || "";
-    existingItemsGroup.appendChild(opt);
+    itemSelect.appendChild(opt);
   });
 }
-loadExistingItems();
 
-/* Load existing locations */
+/* -------------------- Load locations -------------------- */
 async function loadLocations() {
   const snap = await getDocs(collection(db, "inventory"));
   const locSet = new Set();
 
-  snap.forEach(d => {
-    const locs = d.data().locations || {};
-    Object.keys(locs).forEach(l => locSet.add(l));
+  snap.forEach((d) => {
+    const data = d.data();
+    const locations = data.locations || {};
+    Object.keys(locations).forEach((loc) => locSet.add(loc));
   });
 
-  locationSelect.innerHTML = `<option value="">Select a location</option>`;
-  [...locSet].sort().forEach(l => {
-    const o = document.createElement("option");
-    o.value = l;
-    o.textContent = l;
-    locationSelect.appendChild(o);
+  locationSelect.innerHTML = `<option value="">Select location</option>`;
+  [...locSet].sort().forEach((loc) => {
+    const opt = document.createElement("option");
+    opt.value = loc;
+    opt.textContent = loc;
+    locationSelect.appendChild(opt);
   });
 }
-loadLocations();
 
-/* Item selection */
-itemSelect.addEventListener("change", async () => {
-  const opt = itemSelect.selectedOptions[0];
-
-  if (opt.value === "__new") {
-    newItemModal.style.display = "flex";
-    return;
-  }
-
-  if (opt.dataset.unit) itemUnit.value = opt.dataset.unit;
-  if (opt.dataset.size) itemSize.value = opt.dataset.size;
+/* -------------------- Advanced toggle -------------------- */
+advToggle.addEventListener("click", () => {
+  const open = advSection.style.display === "block";
+  advSection.style.display = open ? "none" : "block";
+  advToggle.textContent = open
+    ? "Show Advanced Settings (PAR / MIN / MAX) ▼"
+    : "Hide Advanced Settings (PAR / MIN / MAX) ▲";
 });
 
-/* Add new item modal */
-saveNewItem.addEventListener("click", () => {
-  if (!newItemName.value.trim()) return alert("Enter item name");
-
-  const opt = document.createElement("option");
-  opt.value = newItemName.value.trim();
-  opt.textContent = newItemName.value.trim();
-  opt.dataset.unit = newItemUnit.value.trim();
-  opt.dataset.size = newItemSize.value.trim();
-
-  existingItemsGroup.appendChild(opt);
-  itemSelect.value = opt.value;
-
-  itemUnit.value = newItemUnit.value.trim();
-  itemSize.value = newItemSize.value.trim();
-
-  newItemModal.style.display = "none";
-});
-
-closeNewItem.addEventListener("click", () => {
-  newItemModal.style.display = "none";
-});
-
-/* Add new location */
+/* -------------------- Add new location -------------------- */
 addNewLocationBtn.addEventListener("click", () => {
-  const name = prompt("Enter new location:");
+  const name = prompt("Enter new location name:");
   if (!name) return;
 
   const opt = document.createElement("option");
   opt.value = name;
   opt.textContent = name;
+  opt.selected = true;
   locationSelect.appendChild(opt);
-  locationSelect.value = name;
 });
 
-/* Submit Add/Top-Up */
-form.addEventListener("submit", async e => {
+/* -------------------- Form submit: add / top-up -------------------- */
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = itemSelect.value.trim();
-  const qty = Number(itemQty.value);
+  const selectedItemId = itemSelect.value;
+  const manualName = itemNameInput.value.trim();
+  const qty = parseInt(qtyInput.value, 10);
   const loc = locationSelect.value;
 
-  const unit = itemUnit.value.trim();
-  const size = itemSize.value.trim();
+  if (!qty || qty <= 0) {
+    alert("Please enter a valid quantity.");
+    return;
+  }
+  if (!loc) {
+    alert("Please select a location.");
+    return;
+  }
+  if (!selectedItemId && !manualName) {
+    alert("Select an existing item OR enter a new item name.");
+    return;
+  }
 
-  let par = Number(parInput.value);
-  let min = Number(minInput.value);
-  let max = Number(maxInput.value);
+  // Advanced values
+  let par = parseInt(parInput.value, 10);
+  let min = parseInt(minInput.value, 10);
+  let max = parseInt(maxInput.value, 10);
 
   if (isNaN(par)) par = qty;
   if (isNaN(min)) min = Math.floor(qty / 2);
-  if (isNaN(max)) max = qty * 2;
+  if (isNaN(max)) max = qty * 2 || 9999;
 
-  const snap = await getDocs(collection(db, "inventory"));
-  let existing = null;
-
-  snap.forEach(d => {
-    const data = d.data();
-    if (data.displayName.toLowerCase() === name.toLowerCase()) {
-      existing = { id: d.id, ...data };
-    }
-  });
-
-  /* New item */
-  if (!existing) {
+  /* ------------ NEW ITEM ------------ */
+  if (!selectedItemId && manualName) {
     const newRef = doc(collection(db, "inventory"));
     await setDoc(newRef, {
-      displayName: name,
-      unit, size,
+      displayName: manualName,
       defaultPar: par,
       defaultMin: min,
       defaultMax: max,
@@ -163,35 +130,83 @@ form.addEventListener("submit", async e => {
       }
     });
 
-    await log("add-new-item", name, loc, qty, "Initial setup");
-    alert("New item created");
+    await logAction("add-new-item", manualName, loc, qty, "Initial setup");
+    alert("New item created.");
+    resetForm();
+    await loadItems();
+    await loadLocations();
+    return;
   }
 
-  /* Existing item */
-  else {
-    const itemRef = doc(db, "inventory", existing.id);
-    const currentQty = existing.locations?.[loc]?.qty || 0;
+  /* ------------ EXISTING ITEM (TOP-UP) ------------ */
+  if (selectedItemId) {
+    const itemRef = doc(db, "inventory", selectedItemId);
+    const snap = await getDoc(itemRef);
+    if (!snap.exists()) {
+      alert("Item not found in inventory.");
+      return;
+    }
 
-    const updates = {
-      displayName: name,
-      unit, size,
-      [`locations.${loc}.qty`]: currentQty + qty
-    };
+    const data = snap.data();
+    const itemName = data.displayName || itemNameMap[selectedItemId] || "Item";
+    const locations = data.locations || {};
+    const locData = locations[loc];
+    const currentQty = locData?.qty || 0;
+
+    const updates = {};
+
+    if (!locData) {
+      // New location for this item
+      updates[`locations.${loc}`] = {
+        qty: qty,
+        par: advSection.style.display === "block" ? par : (data.defaultPar ?? par),
+        min: advSection.style.display === "block" ? min : (data.defaultMin ?? min),
+        max: advSection.style.display === "block" ? max : (data.defaultMax ?? max)
+      };
+    } else {
+      // Existing location, just add qty
+      updates[`locations.${loc}.qty`] = currentQty + qty;
+
+      // If advanced open, update thresholds too
+      if (advSection.style.display === "block") {
+        updates[`locations.${loc}.par`] = par;
+        updates[`locations.${loc}.min`] = min;
+        updates[`locations.${loc}.max`] = max;
+        updates.defaultPar = par;
+        updates.defaultMin = min;
+        updates.defaultMax = max;
+      }
+    }
 
     await updateDoc(itemRef, updates);
-    await log("topup", name, loc, qty, "Stock top-up");
-    alert("Stock updated");
-  }
+    await logAction("topup", itemName, loc, qty, "Stock top-up");
 
-  form.reset();
-  loadExistingItems();
+    alert("Item updated.");
+    resetForm();
+    await loadLocations();
+    return;
+  }
 });
 
-/* Logging */
-async function log(type, item, loc, qty, reason) {
+/* -------------------- Logging -------------------- */
+async function logAction(type, item, location, qty, reason) {
   await addDoc(collection(db, "inventoryLogs"), {
-    type, item, location: loc,
-    qty, reason,
+    type,
+    item,
+    location,
+    qty,
+    reason,
     timestamp: serverTimestamp()
   });
 }
+
+/* -------------------- Reset form -------------------- */
+function resetForm() {
+  form.reset();
+  advSection.style.display = "none";
+  advToggle.textContent = "Show Advanced Settings (PAR / MIN / MAX) ▼";
+}
+
+/* -------------------- Initial load -------------------- */
+loadItems();
+loadLocations();
