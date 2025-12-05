@@ -2,179 +2,227 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Add Inventory Item</title>
+  <title>Add / Top-Up Inventory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="./css/styles.css">
-
   <style>
-    body { background: #f4f4f4; }
+    body {
+      background: #f4f4f4;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
 
-    h1 { 
-      text-align:center; 
-      color:#C62828; 
-      margin-bottom:15px; 
+    .container {
+      max-width: 480px;
+      margin: 24px auto;
+      padding: 0 14px 30px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #C62828;
+      margin-bottom: 10px;
+    }
+
+    /* Top nav (same style as inventory.html) */
+    nav {
+      margin-bottom: 16px;
     }
 
     nav a {
-      display:inline-block; background:#C62828; padding:10px 14px;
-      border-radius:6px; margin-right:8px; color:white !important;
-      font-weight:bold; text-decoration:none; font-size:14px;
+      display: inline-block;
+      background: #C62828;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-right: 8px;
+      color: white !important;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 14px;
     }
 
+    nav a:hover {
+      background: #8E0000;
+    }
+
+    /* Card like inventory */
     .card {
-      background:white; padding:20px; border-radius:12px;
-      margin-top:20px; box-shadow:0 3px 8px rgba(0,0,0,0.12);
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
     }
 
-    label {
-      font-weight:bold;
-      margin-top:14px;
-      display:block;
-      color:#333 !important;
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #B71C1C;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border-left: 4px solid #B71C1C;
+      padding-left: 10px;
     }
 
-    input, select {
-      width:100%; padding:12px; margin-top:6px; border:1px solid #ccc;
-      border-radius:6px; font-size:15px;
-      background:#ffffff !important;
-      color:#000 !important;
+    .section-title span.icon {
+      font-size: 18px;
     }
 
-    input::placeholder {
-      color:#777 !important;
+    .form-group {
+      margin-bottom: 14px;
     }
 
-    select option {
-      background:white !important;
-      color:black !important;
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .form-input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fff;
+      font-size: 14px;
+      box-sizing: border-box;
     }
 
     .inline-btn {
-      background:#1565c0; 
-      padding:8px 10px; 
-      margin-top:10px;
-      border-radius:6px; 
-      color:white; 
-      font-size:13px; 
-      cursor:pointer; 
-      width:auto;
-      border:none;
+      background: #1565C0;
+      padding: 8px 10px;
+      border-radius: 6px;
+      color: white;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      margin-top: 6px;
+      font-weight: bold;
     }
 
-    button {
-      width:100%; background:#C62828; border:none; padding:14px;
-      font-size:16px; color:white; margin-top:20px;
-      border-radius:6px; cursor:pointer; font-weight:bold;
+    .inline-btn:hover {
+      background: #0d47a1;
     }
 
-    button:hover { background:#8E0000; }
-
-    /* Modal for Add New Item */
-    #newItemModal {
-      position:fixed; inset:0; background:rgba(0,0,0,0.45);
-      display:none; justify-content:center; align-items:center;
-      padding:20px; z-index:999;
+    .advanced-toggle {
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #1565C0;
+      cursor: pointer;
     }
 
-    .modal-box {
-      background:white; padding:20px; border-radius:12px;
-      width:350px; box-shadow:0 3px 12px rgba(0,0,0,0.3);
+    #advSection {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fafafa;
+      border: 1px solid #ddd;
     }
 
-    .modal-btn {
-      width:100%; margin-top:12px; padding:12px;
-      border:none; border-radius:6px;
-      font-size:15px; font-weight:bold; cursor:pointer;
-      color:white;
+    .primary-btn {
+      width: 100%;
+      background: #C62828;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
     }
 
-    .save-btn { background:#2e7d32; }
-    .close-btn { background:#444; }
+    .primary-btn:hover {
+      background: #8E0000;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
 
-    <h1>Add Inventory Item</h1>
+    <h1>Add / Top-Up Inventory</h1>
 
     <nav>
       <a href="index.html">← Dashboard</a>
       <a href="inventory.html">Inventory</a>
-      <a href="inventoryLogs.html">Logs & Summary</a>
+      <a href="transfer.html">Transfer Stock</a>
     </nav>
 
     <div class="card">
       <form id="addStockForm">
 
-        <label>Item</label>
-        <select id="itemSelect" required>
-          <option value="">Select an Item</option>
-          <optgroup label="Preset First Aid Items">
-            <option data-unit="tube" data-size="60ml">Burn Gel</option>
-            <option data-unit="bottle" data-size="30ml">Eyewash</option>
-            <option data-unit="pack" data-size="100 swabs">Alcohol Swabs</option>
-            <option data-unit="pair" data-size="">Nitrile Gloves</option>
-            <option data-unit="roll" data-size="5cm">Crepe Bandage 5cm</option>
-            <option data-unit="roll" data-size="10cm">Crepe Bandage 10cm</option>
-            <option data-unit="piece" data-size="">Triangular Bandage</option>
-            <option data-unit="piece" data-size="No.3">Sterile Dressing No.3</option>
-            <option data-unit="piece" data-size="No.7">Sterile Dressing No.7</option>
-          </optgroup>
+        <!-- Item section -->
+        <h2 class="section-title">
+          <span class="icon">📦</span> Item Details
+        </h2>
 
-          <optgroup id="existingItems" label="Existing Inventory Items"></optgroup>
+        <div class="form-group">
+          <label>Select Existing Item</label>
+          <select id="itemNameSelect" class="form-input">
+            <option value="">Loading…</option>
+          </select>
+        </div>
 
-          <option value="__new">➕ Add New Item</option>
-        </select>
+        <div class="form-group">
+          <label>Or Enter New Item Name</label>
+          <input id="itemName" class="form-input" type="text"
+                 placeholder="e.g. Gloves, Saline 0.9%, Bandage Roll">
+        </div>
 
-        <label>Unit</label>
-        <input id="itemUnit" type="text" placeholder="box / bottle / pack / roll" required>
+        <div class="form-group">
+          <label>Quantity to Add</label>
+          <input id="itemQty" class="form-input" type="number" min="1" placeholder="e.g. 10" required>
+        </div>
 
-        <label>Size</label>
-        <input id="itemSize" type="text" placeholder="3ml / 10pcs / 5cm" required>
+        <!-- Location section -->
+        <h2 class="section-title">
+          <span class="icon">📍</span> Stock Location
+        </h2>
 
-        <label>Quantity</label>
-        <input id="itemQty" type="number" min="1" required>
+        <div class="form-group">
+          <label>Select Location</label>
+          <select id="locationSelect" class="form-input">
+            <option value="">Loading…</option>
+          </select>
+          <button type="button" id="addNewLocationBtn" class="inline-btn">+ Add New Location</button>
+        </div>
 
-        <label>Location</label>
-        <select id="locationSelect" required>
-          <option value="">Select a location</option>
-        </select>
+        <!-- Advanced section -->
+        <h2 class="section-title">
+          <span class="icon">⚙️</span> Advanced Settings
+        </h2>
 
-        <button type="button" id="addNewLocationBtn" class="inline-btn">+ Add New Location</button>
+        <div id="advToggle" class="advanced-toggle">
+          Show Advanced Settings (PAR / MIN / MAX) ▼
+        </div>
 
-        <label>PAR (Optional)</label>
-        <input id="parDefault" type="number" min="0">
+        <div id="advSection">
+          <div class="form-group">
+            <label>Default PAR</label>
+            <input id="parDefault" class="form-input" type="number" min="0" placeholder="Auto if left empty">
+          </div>
+          <div class="form-group">
+            <label>Default MIN</label>
+            <input id="minDefault" class="form-input" type="number" min="0" placeholder="Auto if left empty">
+          </div>
+          <div class="form-group">
+            <label>Default MAX</label>
+            <input id="maxDefault" class="form-input" type="number" min="0" placeholder="Auto if left empty">
+          </div>
+        </div>
 
-        <label>MIN (Optional)</label>
-        <input id="minDefault" type="number" min="0">
-
-        <label>MAX (Optional)</label>
-        <input id="maxDefault" type="number" min="0">
-
-        <button type="submit">Confirm Add / Top-Up</button>
+        <button type="submit" class="primary-btn">Save Stock</button>
       </form>
     </div>
-  </div>
 
-  <!-- New Item Modal -->
-  <div id="newItemModal">
-    <div class="modal-box">
-      <h3>New Item</h3>
-
-      <label>Item Name</label>
-      <input id="newItemName">
-
-      <label>Unit</label>
-      <input id="newItemUnit">
-
-      <label>Size</label>
-      <input id="newItemSize">
-
-      <button id="saveNewItem" class="modal-btn save-btn">Save</button>
-      <button id="closeNewItem" class="modal-btn close-btn">Cancel</button>
-    </div>
   </div>
 
   <script type="module" src="./js/addStock.js"></script>
