@@ -1,168 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>First Aid App Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>First Aid Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Main Styles -->
-<link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/styles.css">
 
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#C62828">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#C62828">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(() => console.log("Service Worker Registered"));
-  }
-</script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #ececec; /* Softer grey instead of white */
+      margin: 0;
+      padding: 0;
+    }
 
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f7f7f7;
-    margin: 0;
-    padding: 0;
-  }
+    /* ---------------- HEADER ---------------- */
+    .header {
+      background: #C62828;
+      padding: 26px 16px;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.25);
+    }
 
-  .container {
-    max-width: 480px;
-    margin: 30px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    text-align: center;
-  }
+    .header h1 {
+      margin: 0;
+      font-size: 30px;
+      color: white;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+      text-align: center;
+      width: 100%;
+    }
 
-  /* 🔥 LOW STOCK BANNER */
-  .alert-banner {
-    display: none;
-    background: #ffebee;
-    border-left: 6px solid #c62828;
-    padding: 14px;
-    border-radius: 10px;
-    margin-bottom: 18px;
-    color: #b71c1c;
-    font-weight: bold;
-    text-align: left;
-  }
+    .subtitle {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #ffecec;
+      opacity: 0.9;
+      text-align: center;
+      width: 100%;
+    }
 
-  h1 {
-    margin-bottom: 24px;
-    color: #C62828;
-    font-size: 28px;
-    font-weight: bold;
-  }
+    /* ---------------- ALERT BOX ---------------- */
+    .alert-box {
+      max-width: 520px;
+      margin: 20px auto 0;
+      padding: 12px 14px;
+      background: #fff5e6; /* Softer off-white */
+      border-left: 6px solid #EF6C00;
+      border-radius: 12px;
+      color: #bf360c;
+      font-size: 14px;
+      line-height: 1.45;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-  /* 🔳 APP TILE BUTTONS (square style) */
-  .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
+    .alert-box a {
+      color: #C62828;
+      font-weight: bold;
+      text-decoration: none;
+    }
 
-  .menu-tile {
-    background: #C62828;
-    color: white;
-    padding: 26px 10px;
-    border-radius: 14px;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 110px;
-    font-size: 18px;
-    font-weight: bold;
-    transition: 0.2s ease;
-  }
+    /* ---------------- MENU SECTION ---------------- */
+    .menu-section {
+      max-width: 520px;
+      margin: 18px auto 40px;
+      padding: 0 16px;
+    }
 
-  .menu-tile:hover {
-    background: #8E0000;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  }
-</style>
+    .menu-group-title {
+      font-weight: bold;
+      font-size: 15px;
+      color: #444;
+      margin: 22px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
 
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    /* ---------------- BUTTONS ---------------- */
+    .menu-button {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 18px 12px;
+      text-align: center;
+      color: #333;
+      font-weight: bold;
+      font-size: 15px;
+      text-decoration: none;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      transition: 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100px;
+      border: 1px solid #f0f0f0; /* Softer outline */
+    }
+
+    .menu-button:hover {
+      transform: translateY(-3px);
+      background: #fafafa;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    .icon {
+      font-size: 30px;
+      margin-bottom: 6px;
+      color: #C62828;
+    }
+
+    /* ---------------- FLOATING HELP BUTTON ---------------- */
+    #helpButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1565C0;
+      color: white;
+      border: none;
+      padding: 16px 18px;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      z-index: 20;
+    }
+
+    #helpButton:hover {
+      background: #0d47a1;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="container">
 
-    <!-- 🔥 WARNING BANNER -->
-    <div id="lowStockBanner" class="alert-banner"></div>
-
-    <h1>First Aid Dashboard</h1>
-
-    <div class="menu-grid">
-      <a class="menu-tile" href="report.html">📄 <br>Report</a>
-      <a class="menu-tile" href="inventory.html">📦 <br>Inventory</a>
-      <a class="menu-tile" href="addStock.html">➕ <br>Add Stock</a>
-      <a class="menu-tile" href="transfer.html">🔄 <br>Transfer</a>
-      <a class="menu-tile" href="inventoryLogs.html">📑 <br>Logs</a>
-      <a class="menu-tile" href="reportLogs.html">🗂 <br>Reports</a>
-    </div>
-
+  <!-- Header -->
+  <div class="header">
+    <h1>First Aid App</h1>
+    <div class="subtitle">Event Response • Reporting • Inventory</div>
   </div>
 
-  <!-- 🔥 LOW STOCK CHECK SCRIPT -->
+  <!-- Low Stock Banner -->
+  <div id="lowStockBanner" class="alert-box" style="display:none;">
+    ⚠️ Some items are critically low. 
+    <a href="inventory.html">Review Inventory</a>
+  </div>
+
+  <!-- MAIN MENU -->
+  <div class="menu-section">
+
+    <div class="menu-group-title">Reporting</div>
+    <div class="menu-grid">
+      <a class="menu-button" href="report.html">
+        <div class="icon">📄</div>
+        New Injury Report
+      </a>
+
+      <a class="menu-button" href="reportLogs.html">
+        <div class="icon">🗂</div>
+        Report Logs
+      </a>
+    </div>
+
+    <div class="menu-group-title">Inventory</div>
+    <div class="menu-grid">
+      <a class="menu-button" href="inventory.html">
+        <div class="icon">📦</div>
+        View Inventory
+      </a>
+
+      <a class="menu-button" href="addStock.html">
+        <div class="icon">➕</div>
+        Add / Top Up
+      </a>
+
+      <a class="menu-button" href="transfer.html">
+        <div class="icon">🔄</div>
+        Transfer
+      </a>
+
+      <a class="menu-button" href="inventoryLogs.html">
+        <div class="icon">📑</div>
+        Summary & Logs
+      </a>
+    </div>
+  </div>
+
+  <!-- Help Button -->
+  <button id="helpButton">❓</button>
+
+  <script src="./js/help.js"></script>
+
+  <!-- Optional dynamic low stock JS -->
   <script type="module">
-    import { db } from "./js/app.js";
-    import {
-      collection,
-      getDocs
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    /*
+      import { db } from "./js/app.js";
+      import { collection, getDocs }
+      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const banner = document.getElementById("lowStockBanner");
+      async function checkLowStock() {
+        const snap = await getDocs(collection(db, "inventory"));
+        let show = false;
 
-    async function checkLowStock() {
-      const snap = await getDocs(collection(db, "inventory"));
-
-      let lowList = [];
-      let criticalList = [];
-
-      snap.forEach(doc => {
-        const data = doc.data();
-        const name = data.displayName;
-        const locations = data.locations || {};
-
-        Object.keys(locations).forEach(loc => {
-          const info = locations[loc];
-          const qty = info.qty || 0;
-          const par = info.par ?? 0;
-          const min = info.min ?? 0;
-
-          if (qty <= min) {
-            criticalList.push(`${name} (${loc})`);
-          } else if (qty < par) {
-            lowList.push(`${name} (${loc})`);
-          }
+        snap.forEach(doc => {
+          const item = doc.data();
+          Object.values(item.locations || {}).forEach(loc => {
+            if (loc.qty <= loc.min) show = true;
+          });
         });
-      });
 
-      if (criticalList.length === 0 && lowList.length === 0) {
-        banner.style.display = "none";
-        return;
+        if (show) {
+          document.getElementById("lowStockBanner").style.display = "block";
+        }
       }
 
-      let html = "";
-
-      if (criticalList.length > 0) {
-        html += `🔴 <b>Critical Stock:</b><br>${criticalList.join("<br>")}<br><br>`;
-      }
-
-      if (lowList.length > 0) {
-        html += `🟠 <b>Low Stock:</b><br>${lowList.join("<br>")}`;
-      }
-
-      banner.innerHTML = html;
-      banner.style.display = "block";
-    }
-
-    checkLowStock();
+      checkLowStock();
+    */
   </script>
 
 </body>
