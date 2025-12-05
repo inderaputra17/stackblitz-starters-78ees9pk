@@ -1,95 +1,187 @@
 import { db } from "./app.js";
-import { 
-  collection, 
-  addDoc, 
-  serverTimestamp 
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// Same discharge text logic as preview
+console.log("report.js loaded");
+
+let currentStep = 1;
+
+/* STEP HANDLING */
+function showStep(step) {
+  currentStep = step;
+
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById("step" + i).style.display =
+      i === step ? "block" : "none";
+
+    document.getElementById("stepLabel" + i).classList.toggle(
+      "active-step",
+      i === step
+    );
+  }
+
+  updatePreview();
+}
+
+window.nextStep = function () {
+  if (currentStep < 4) showStep(currentStep + 1);
+};
+
+window.prevStep = function () {
+  if (currentStep > 1) showStep(currentStep - 1);
+};
+
+/* VALUE HELPER */
+function v(id) {
+  return document.getElementById(id).value || "";
+}
+
+/* Toggle ambulance fields */
+function toggleAmbulance() {
+  const d = v("discharge");
+  document.getElementById("ambulanceFields").style.display =
+    d === "ambulance" ? "block" : "none";
+}
+
+/* Build discharge text */
 function dischargeText() {
-  const method = document.getElementById("discharge").value;
+  const d = v("discharge");
 
-  if (method === "self") {
-    return "Self-discharged and continued with activity";
-  }
+  if (d === "self") return "Self-discharged and continued with activity";
 
-  if (method === "ambulance") {
-    return `Sent by Alpha ${document.getElementById("alphaNo").value} to ${document.getElementById("hospital").value}, handed over to ${document.getElementById("paramedic").value}`;
-  }
+  if (d === "ambulance")
+    return `Sent by Alpha ${v("alphaNo")} to ${v("hospital")}, handed over to ${v("paramedic")}`;
 
-  if (method === "other") {
-    return document.getElementById("dischargeOther").value;
-  }
-
-  return "";
+  return v("dischargeOther") || "";
 }
 
-// Reuse the same duration logic as HTML (simplified)
-function parseTime(str) {
-  if (!str) return null;
-  const clean = str.trim();
-  if (!/^\d{3,4}$/.test(clean)) return null;
-  const padded = clean.padStart(4, "0");
-  const h = parseInt(padded.slice(0, 2), 10);
-  const m = parseInt(padded.slice(2), 10);
-  if (h > 23 || m > 59) return null;
-  return h * 60 + m;
+/* Build preview */
+function updatePreview() {
+  document.getElementById("previewBox").textContent =
+`Time in: ${v("timeIn")} hrs
+Time out: ${v("timeOut")} hrs
+Patient’s name: ${v("patientName")}
+Gender: ${v("gender")}
+Age: ${v("age")}
+Contact no.: ${v("contact")}
+
+Case Type: ${v("caseType")}
+Location: ${v("location")}
+
+Mechanism (MOI) & Treatment:
+${v("moi")}
+
+${v("treatment")}
+
+Discharge Method:
+${dischargeText()}.`;
 }
 
-function getDurationText() {
-  const timeIn = document.getElementById("timeIn").value;
-  const timeOut = document.getElementById("timeOut").value;
-  const tIn = parseTime(timeIn);
-  const tOut = parseTime(timeOut);
-  if (tIn == null || tOut == null) return "";
+/* Attach listeners */
+[
+  "timeIn","timeOut","patientName","gender","age","contact",
+  "caseType","location","moi","treatment",
+  "discharge","dischargeOther","alphaNo","hospital","paramedic"
+].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", () => {
+    if (id === "discharge") toggleAmbulance();
+    updatePreview();
+  });
+});
 
-  let diff = tOut - tIn;
-  if (diff < 0) diff += 24 * 60;
+toggleAmbulance();
+updatePreview();
 
-  if (diff === 0) return "0 minutes";
+/* Copy button */
+document.getElementById("copyButton").onclick = () => {
+  navigator.clipboard.writeText(document.getElementById("previewBox").textContent)
+    .then(() => alert("Report copied!"));
+};
 
-  const hours = Math.floor(diff / 60);
-  const mins = diff % 60;
-  const parts = [];
-  if (hours) parts.push(hours + " hour" + (hours !== 1 ? "s" : ""));
-  if (mins) parts.push(mins + " minute" + (mins !== 1 ? "s" : ""));
-  return parts.join(" ");
+/* EDIT MODE */
+const urlParams = new URLSearchParams(window.location.search);
+const editId = urlParams.get("id");
+
+async function loadExisting(id) {
+  const ref = doc(db, "injuryReports", id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return;
+
+  const r = snap.data();
+
+  document.getElementById("timeIn").value = r.timeIn || "";
+  document.getElementById("timeOut").value = r.timeOut || "";
+  document.getElementById("patientName").value = r.patientName || "";
+  document.getElementById("gender").value = r.gender || "Male";
+  document.getElementById("age").value = r.age || "";
+  document.getElementById("contact").value = r.contact || "";
+  document.getElementById("caseType").value = r.caseType || "P3";
+  document.getElementById("location").value = r.location || "";
+  document.getElementById("moi").value = r.moi || "";
+  document.getElementById("treatment").value = r.treatment || "";
+
+  // Discharge parsing
+  if (r.discharge?.startsWith("Sent by Alpha")) {
+    document.getElementById("discharge").value = "ambulance";
+  } else if (r.discharge === "Self-discharged and continued with activity") {
+    document.getElementById("discharge").value = "self";
+  } else {
+    document.getElementById("discharge").value = "other";
+    document.getElementById("dischargeOther").value = r.discharge || "";
+  }
+
+  document.getElementById("alphaNo").value = r.alphaNo || "";
+  document.getElementById("hospital").value = r.hospital || "";
+  document.getElementById("paramedic").value = r.paramedic || "";
+
+  toggleAmbulance();
+  updatePreview();
 }
 
+if (editId) loadExisting(editId);
+
+/* SUBMIT */
 document.getElementById("injuryForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const fullReport = document.getElementById("previewText").textContent;
-
-  const reportData = {
-    timeIn: document.getElementById("timeIn").value,
-    timeOut: document.getElementById("timeOut").value,
-    duration: getDurationText(),   // ✅ new field
-    patientName: document.getElementById("patientName").value,
-    gender: document.getElementById("gender").value,
-    age: document.getElementById("age").value,
-    contact: document.getElementById("contact").value,
-    caseType: document.getElementById("caseType").value,
-    location: document.getElementById("location").value,
-    moi: document.getElementById("moi").value,
-    treatment: document.getElementById("treatment").value,
-    discharge: dischargeText(),    // full discharge text
-    alphaNo: document.getElementById("alphaNo").value,
-    hospital: document.getElementById("hospital").value,
-    paramedic: document.getElementById("paramedic").value,
-    fullText: fullReport,
-    createdAt: serverTimestamp()
+  const payload = {
+    timeIn: v("timeIn"),
+    timeOut: v("timeOut"),
+    patientName: v("patientName"),
+    gender: v("gender"),
+    age: v("age"),
+    contact: v("contact"),
+    caseType: v("caseType"),
+    location: v("location"),
+    moi: v("moi"),
+    treatment: v("treatment"),
+    discharge: dischargeText(),
+    alphaNo: v("alphaNo"),
+    hospital: v("hospital"),
+    paramedic: v("paramedic"),
+    fullText: document.getElementById("previewBox").textContent
   };
 
   try {
-    await addDoc(collection(db, "injuryReports"), reportData);
+    if (editId) {
+      await updateDoc(doc(db, "injuryReports", editId), payload);
+      alert("✔ Report updated.");
+    } else {
+      await addDoc(collection(db, "injuryReports"), {
+        ...payload,
+        createdAt: serverTimestamp()
+      });
+      alert("✔ Report saved.");
+    }
 
-    alert("✔ Report saved!");
-    document.getElementById("injuryForm").reset();
-
-    // optional: reload page so wizard resets properly
-    window.location.reload();
-
+    window.location.href = "reportLogs.html";
   } catch (err) {
     console.error(err);
     alert("❌ Error saving report");
