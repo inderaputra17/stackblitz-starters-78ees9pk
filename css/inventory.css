@@ -1,0 +1,254 @@
+/* ===========================================
+   ROOT COLOURS — MATCHING YOUR SYSTEM
+=========================================== */
+:root {
+  --red: #E63946;
+  --red-dark: #C62828;
+  --blue: #1565C0;
+  --text: #333;
+  --bg: #fafafa;
+
+  --card-bg: #fff;
+  --border: #ddd;
+
+  --radius: 14px;
+  --shadow: 0 4px 10px rgba(0,0,0,0.12);
+
+  --ok: #2E7D32;
+  --low: #FBC02D;
+  --critical: #E53935;
+}
+
+/* ===========================================
+   DELETE BUTTON COLOURS
+=========================================== */
+.danger-btn {
+  background: var(--critical);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.danger-btn:hover {
+  background: var(--red-dark);
+}
+
+.danger-btn-light {
+  background: var(--red);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.danger-btn-light:hover {
+  background: var(--red-dark);
+}
+
+/* ===========================================
+   GENERAL
+=========================================== */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 780px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* ===========================================
+   NAV BAR
+=========================================== */
+.nav {
+  background: white;
+  padding: 16px;
+  border-bottom: 3px solid var(--red);
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.nav-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.nav-link-left,
+.nav-link-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--red);
+}
+
+.nav-link-left { left: 16px; }
+.nav-link-right { right: 16px; }
+
+/* ===========================================
+   CARDS & INPUTS
+=========================================== */
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.form-input {
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto; 
+  margin-right: auto;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-sizing: border-box;
+  font-size: 15px;
+}
+
+.form-input:focus {
+  border-color: var(--red);
+  outline: none;
+  box-shadow: 0 0 6px rgba(230,57,70,0.3);
+}
+
+/* ===========================================
+   ITEM CARDS
+=========================================== */
+.item-card {
+  background: white;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red-dark);
+}
+
+.status-badge {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.status-ok        { background: var(--ok); }
+.status-low       { background: var(--low); color: #000; }
+.status-critical  { background: var(--critical); }
+
+/* LOCATION LIST */
+.location-row {
+  padding: 10px;
+  background: #f8f8f8;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+}
+
+.location-title {
+  font-weight: 700;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+
+.location-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  flex: 1;
+  max-width: 140px;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-edit   { background: var(--blue); color: white; }
+.btn-add    { background: var(--ok); color: white; }
+.btn-minus  { background: var(--critical); color: white; }
+
+/* ===========================================
+   MODALS
+=========================================== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.hidden { display: none !important; }
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 380px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content .form-input {
+  max-width: 300px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  width: 100%;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  width: 120px;
+}
+
+.btn.primary { background: var(--red); color: white; }
+.btn.secondary { background: #ddd; }
