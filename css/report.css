@@ -1,0 +1,234 @@
+/* =========================================================
+   ROOT COLORS (Match Report Logs)
+========================================================= */
+:root {
+  --red: #E63946;
+  --red-dark: #b02b34;
+
+  --p1: #B71C1C;
+  --p2: #EF6C00;
+  --p3: #2E7D32;
+
+  --bg: #fafafa;
+  --card: #ffffff;
+
+  --text: #222;
+  --muted: #777;
+
+  --radius: 12px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  font-family: Inter, sans-serif;
+}
+
+/* =========================================================
+   NAV BAR (Dashboard LEFT, Logs RIGHT)
+========================================================= */
+.nav {
+  background: white;
+  padding: 16px;
+  border-bottom: 3px solid var(--red);
+  box-shadow: var(--shadow);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* CENTER TITLE */
+.nav-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+/* LEFT = DASHBOARD */
+.nav-link-left {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--red);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* RIGHT = LOGS */
+.nav-link-right {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--red);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* =========================================================
+   PAGE WRAPPER
+========================================================= */
+.page {
+  max-width: 560px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* =========================================================
+   STEP BAR (Wizard Tabs)
+========================================================= */
+.step-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.step {
+  flex: 1;
+  padding: 10px 0;
+  background: #e6e6e6;
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+}
+
+.active-step {
+  background: var(--red);
+  color: white;
+}
+
+/* =========================================================
+   CARD (Wizard Step Container)
+========================================================= */
+.card {
+  background: var(--card);
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+
+  display: none;
+  align-items: stretch; /* prevents broken button alignment */
+  animation: fadeIn 0.25s ease-out;
+}
+
+.active-step-card {
+  display: block;
+}
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red);
+  margin-bottom: 16px;
+}
+
+/* =========================================================
+   FORM FIELDS
+========================================================= */
+.field {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 16px auto;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: white;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+textarea { resize: vertical; }
+
+/* =========================================================
+   BUTTON SYSTEM (Aligned Perfectly)
+========================================================= */
+.btn {
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.primary { background: var(--red); color: white; }
+.primary:hover { background: var(--red-dark); }
+
+.secondary { background: #ddd; color: #333; }
+.blue { background: #1565C0; color: white; }
+
+/* ROW-BUTTONS (Back / Next layouts) */
+.btn-row {
+  width: 100%;
+  max-width: 420px;
+  margin: 10px auto 0 auto;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn-row .btn {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* =========================================================
+   PREVIEW BOX
+========================================================= */
+.preview-box {
+  width: 100%;
+  max-width: 420px;
+  background: #f7f7f7;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  white-space: pre-line;
+  line-height: 1.5;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+.hidden { display: none !important; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE
+========================================================= */
+@media (max-width: 480px) {
+  .section-title { font-size: 16px; }
+  .btn { font-size: 14px; }
+}
