@@ -1,0 +1,215 @@
+/* =====================================================
+   FIRST AID SUPERAPP — Unified Dashboard Styling
+===================================================== */
+
+:root {
+  --red: #E63946;
+  --red-dark: #C62828;
+  --blue: #1565C0;
+  --text: #333;
+  --bg: #fafafa;
+
+  --card-bg: #fff;
+  --border: #ddd;
+
+  --radius: 14px;
+  --shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  scroll-behavior: smooth;
+}
+
+.hidden { display: none !important; }
+
+.container {
+  max-width: 780px;
+  padding: 20px;
+  margin: auto;
+}
+
+.topbar {
+  background: var(--red);
+  padding: 20px;
+  text-align: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+/* SUMMARY */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.summary-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px 14px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: 0.2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+}
+
+.summary-card .icon { font-size: 26px; margin-bottom: 8px; }
+.summary-card .value { font-size: 32px; font-weight: 700; color: var(--red); }
+.summary-card .label { opacity: 0.7; font-size: 14px; }
+
+/* Quick Actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.action-btn {
+  padding: 16px 10px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition: 0.15s ease;
+}
+
+.action-btn:hover { transform: translateY(-3px); }
+
+.action-red { background: #fde9e9; }
+.action-green { background: #e5fbe5; }
+.action-blue { background: #e5edff; }
+.action-yellow { background: #fff8d1; }
+
+/* Alerts */
+.alerts-panel .alert {
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.alerts-panel .alert:hover { transform: translateX(4px); }
+
+.alert.low { background: #FFF4C2; color: #806100; }
+.alert.critical { background: #FFD1D1; color: #7a0000; }
+
+/* Event Widget */
+.event-stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+}
+
+.event-btn {
+  display: block;
+  background: var(--red);
+  color: white;
+  padding: 12px;
+  border-radius: var(--radius);
+  text-align: center;
+  font-weight: 700;
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: var(--red);
+  color: white;
+  font-size: 34px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: 0.2s ease;
+}
+
+.fab-menu {
+  position: fixed;
+  right: 24px;
+  bottom: 94px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(15px);
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+
+.fab-menu.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ADMIN CARD (NO DESIGN CHANGE) */
+.admin-card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+/* ------------------------------------------------------
+   FIX 1: FAB “+” button correct shape & icon alignment
+------------------------------------------------------ */
+.fab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0; /* ensures + stays centered */
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------
+   FIX 2: FAB MENU LINKS styled as proper cards
+------------------------------------------------------ */
+.fab-menu a {
+  background: var(--card-bg);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text);       /* FIX: remove browser blue link */
+  text-decoration: none;    /* FIX: remove underline */
+  display: block;           /* card-style block */
+  transition: 0.15s ease;
+}
+
+/* Hover lift effect to match action buttons */
+.fab-menu a:hover {
+  transform: translateX(-4px);
+}
+
+/* ------------------------------------------------------
+   FIX 3: Make Admin + Logout specific icons centered
+------------------------------------------------------ */
+.fab-menu a::before {
+  font-size: 18px;
+  margin-right: 6px;
+}
