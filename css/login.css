@@ -1,0 +1,118 @@
+:root {
+  --red: #E63946;
+  --red-dark: #C62828;
+  --text: #333;
+  --bg: #fafafa;
+  --card-bg: #fff;
+  --radius: 14px;
+  --shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  width: 90%;
+  max-width: 400px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--red-dark);
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid #ddd;
+  box-shadow: var(--shadow);
+}
+
+/* -------------------------------------------
+   FIXED: Input + Show button centered in a row
+------------------------------------------- */
+.input-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.input-row .input {
+  flex: 1; /* input stretches while button stays fixed */
+}
+
+/* -------------------------------------------
+   Input & Button Styling
+------------------------------------------- */
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+.btn {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+}
+
+.primary-btn {
+  background: var(--red);
+  color: white;
+}
+
+.small-btn {
+  background: #ddd;
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
+.error {
+  margin-top: 10px;
+  color: var(--red-dark);
+  text-align: center;
+}
+
+.hidden { display: none; }
+/* FIX: Input + Show button centered and correctly sized */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Override width:100% ONLY inside input-row */
+.input-row .input {
+  flex: 1;
+  width: auto;    /* THIS FIXES THE BUG */
+  min-width: 120px;
+}
+
+/* Keep default width for other inputs */
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
