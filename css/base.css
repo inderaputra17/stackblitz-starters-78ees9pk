@@ -1,0 +1,347 @@
+/* ============================================================
+   BASE DESIGN SYSTEM v2
+   Reset • Tokens • Layout • Components • Utilities
+   (Safe for ALL pages, no feature changes)
+============================================================ */
+
+/* ------------------------------------------------------------
+   1. RESET
+------------------------------------------------------------ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ------------------------------------------------------------
+   2. TOKENS
+------------------------------------------------------------ */
+:root {
+  /* Brand Colours */
+  --red: #E63946;
+  --red-dark: #c52c38;
+
+  --neutral: #D2BBA0;
+  --neutral-dark: #b49f85;
+
+  --bg-primary: #E7DFD8;
+  --bg-card: #FFFFFF;
+
+  /* Status Colours */
+  --ok: #9CCC65;
+  --low: #FFEE58;
+  --critical: #EF5350;
+  --overstock: #42A5F5;
+
+  /* Text */
+  --text-primary: #333;
+  --text-secondary: #555;
+
+  /* Borders */
+  --border-light: #ddd;
+  --border-mid: #bbb;
+
+  /* Shadows */
+  --shadow-card: 0 3px 8px rgba(0,0,0,0.15);
+  --shadow-modal: 0 4px 14px rgba(0,0,0,0.25);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 14px;
+  --space-lg: 20px;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --transition-fast: 0.15s var(--ease);
+  --transition-mid: 0.25s var(--ease);
+
+  /* Breakpoints */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+}
+
+/* ------------------------------------------------------------
+   3. UTILITIES
+------------------------------------------------------------ */
+.hidden {
+  display: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+
+/* Disable scroll behind modal */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   4. PAGE WRAPPER
+------------------------------------------------------------ */
+.container {
+  padding: var(--space-lg);
+  width: 100%;
+}
+
+/* ------------------------------------------------------------
+   5. TOP BAR
+------------------------------------------------------------ */
+.topbar {
+  background: var(--red);
+  color: white;
+  text-align: center;
+  padding: var(--space-md) var(--space-lg);
+  font-size: 22px;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* ------------------------------------------------------------
+   6. NAVIGATION
+------------------------------------------------------------ */
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-sm);
+}
+
+.topnav a {
+  text-decoration: none;
+  padding: 6px 14px;
+  background: var(--neutral);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--neutral-dark);
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: background var(--transition-fast);
+}
+
+.topnav a:hover {
+  background: var(--neutral-dark);
+}
+
+/* Mobile scroll nav */
+@media (max-width: 460px) {
+  .topnav {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 6px;
+  }
+  .topnav a {
+    display: inline-block;
+    width: auto;
+  }
+}
+
+/* ------------------------------------------------------------
+   7. CARD COMPONENT
+------------------------------------------------------------ */
+.card {
+  background: var(--bg-card);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--space-lg);
+}
+
+/* ------------------------------------------------------------
+   8. SECTION TITLE
+------------------------------------------------------------ */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-title .icon {
+  font-size: 20px;
+}
+
+/* ------------------------------------------------------------
+   9. FORM ELEMENTS
+------------------------------------------------------------ */
+
+/* scoped inputs (SAFE, not global destructive) */
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-mid);
+  background: #fff;
+  transition: border var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 4px rgba(230, 57, 70, 0.35);
+  outline: none;
+}
+
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ------------------------------------------------------------
+   10. BUTTON SYSTEM (Unified)
+------------------------------------------------------------ */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+  margin-top: var(--space-sm);
+}
+
+/* Variants */
+.btn--red {
+  background: var(--red);
+  color: white;
+}
+.btn--red:hover {
+  background: var(--red-dark);
+}
+
+.btn--neutral {
+  background: var(--neutral);
+  color: var(--text-primary);
+}
+.btn--neutral:hover {
+  background: var(--neutral-dark);
+}
+
+.btn--outline {
+  border: 2px solid var(--neutral-dark);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+/* sizes */
+.btn--sm { padding: 8px; font-size: 14px; }
+.btn--lg { padding: 16px; font-size: 17px; }
+
+/* ------------------------------------------------------------
+   11. BADGES
+------------------------------------------------------------ */
+.badge {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge.ok        { background: var(--ok); }
+.badge.low       { background: var(--low); color: #333; }
+.badge.critical  { background: var(--critical); color: #fff; }
+.badge.overstock { background: var(--overstock); color: #fff; }
+
+/* ------------------------------------------------------------
+   12. MODAL COMPONENT
+------------------------------------------------------------ */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 2000;
+}
+
+.modal-box {
+  background: white;
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  width: 90%;
+  max-width: 420px;
+}
+
+.modal-btn {
+  margin-top: var(--space-md);
+  padding: 12px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  width: 100%;
+  border: none;
+}
+
+.modal-btn.confirm {
+  background: var(--red);
+  color: white;
+}
+
+.modal-btn.cancel {
+  background: #777;
+  color: white;
+}
+
+/* ------------------------------------------------------------
+   13. TABLE BASE
+------------------------------------------------------------ */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-light);
+  text-align: left;
+}
+
+th {
+  background: #f7f7f7;
+  font-weight: 700;
+  font-size: 13px;
+}
