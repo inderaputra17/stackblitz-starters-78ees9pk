@@ -1,0 +1,238 @@
+:root {
+  --red: #E63946;
+  --yellow: #F4B400;
+  --blue: #1565C0;
+  --green: #2E7D32;
+
+  --light-panel: #f7f7f7;
+  --border: #e0e0e0;
+  --white: #ffffff;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 14px;
+}
+
+body {
+  margin: 0;
+  background: #fafafa;
+  font-family: Inter, sans-serif;
+}
+
+/* ================================
+   NAVIGATION (Unified Style)
+================================ */
+.nav {
+  background: white;
+  padding: 16px;
+  border-bottom: 3px solid var(--red);
+  box-shadow: var(--shadow);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.nav-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.nav-link-left,
+.nav-link-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--red);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nav-link-left { left: 16px; }
+.nav-link-right { right: 16px; }
+
+/* ================================
+   LAYOUT
+================================ */
+.page {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* ================================
+   CARD
+================================ */
+.card {
+  background: var(--white);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+/* ================================
+   TITLES
+================================ */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ================================
+   KPI GRID
+================================ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.kpi-item {
+  background: var(--light-panel);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.kpi-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.kpi-item.critical { border-left: 5px solid var(--red); }
+.kpi-item.low      { border-left: 5px solid var(--yellow); }
+.kpi-item.over     { border-left: 5px solid var(--blue); }
+
+/* ================================
+   CRITICAL LIST
+================================ */
+.critical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.critical-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: var(--light-panel);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.status-chip {
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.status-chip.critical { background: var(--red); color:#fff; }
+.status-chip.low { background: var(--yellow); }
+
+/* ================================
+   ACTIVITY
+================================ */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-row {
+  display: flex;
+  justify-content: space-between;
+  background: var(--light-panel);
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+/* ================================
+   TABLES
+================================ */
+.summary-table,
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.summary-table th,
+.summary-table td,
+.log-table th,
+.log-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 12px;
+}
+
+.summary-table th,
+.log-table th {
+  background: #f1f1f1;
+  font-weight: 700;
+}
+
+/* ================================
+   FILTERS
+================================ */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.filter-row input,
+.filter-row select {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  background: #fff;
+}
+
+/* ================================
+   ACTION PILL
+================================ */
+.type-pill {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.pill-add { background: var(--green); color:#fff; }
+.pill-dec { background: var(--yellow); }
+.pill-trans { background: var(--blue); color:#fff; }
+.pill-del { background: var(--red); color:#fff; }
+
+/* ================================
+   DETAILS
+================================ */
+.details-row td {
+  background: var(--light-panel);
+  padding: 16px;
+  border-left: 4px solid var(--blue);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .log-table th:nth-child(4),
+  .log-table td:nth-child(4) {
+    display: none;
+  }
+}
