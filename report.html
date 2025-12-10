@@ -2,185 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Create Injury Report</title>
+  <title>Create Report • First Aid App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="./css/styles.css">
-
-  <style>
-    body {
-      background: #f5f5f5;
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    h1 {
-      color: #C62828;
-      text-align: center;
-      margin-bottom: 12px;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    nav {
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    nav a {
-      background: #C62828;
-      color: white;
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 14px;
-      text-decoration: none;
-    }
-
-    /* STEP INDICATOR */
-    .step-indicator {
-      display: flex;
-      justify-content: space-between;
-      margin: 20px 0;
-    }
-
-    .step {
-      width: 22%;
-      padding: 8px 0;
-      text-align: center;
-      background: #e0e0e0;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: bold;
-      color: #666;
-    }
-
-    .active-step {
-      background: #C62828;
-      color: white;
-    }
-
-    /* CARD */
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-
-    .section-title {
-      font-size: 17px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 12px;
-      border-left: 4px solid #C62828;
-      padding-left: 10px;
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    label {
-      font-size: 14px;
-      font-weight: bold;
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      background: #fff;
-    }
-
-    textarea { resize: vertical; }
-
-    /* BUTTONS */
-    .btn {
-      width: 100%;
-      padding: 14px;
-      margin-top: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .next-btn {
-      background: #C62828;
-      color: white;
-    }
-    .next-btn:hover { background: #8E0000; }
-
-    .back-btn {
-      background: #BDBDBD;
-      color: #333;
-    }
-
-    /* PREVIEW */
-    #previewBox {
-      background: white;
-      padding: 16px;
-      border-radius: 10px;
-      font-size: 14px;
-      white-space: pre-wrap;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/report.css">
 </head>
 
+<!-- EARLY SESSION CHECK (Prevents flash of restricted content) -->
+<script>
+  const user = JSON.parse(sessionStorage.getItem("faUser"));
+  if (!user) window.location.replace("login.html");
+</script>
+
 <body>
-<div class="container">
 
-  <h1>Create Injury Report</h1>
+<!-- MUST load before page logic -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
 
-  <nav>
-    <a href="index.html">← Dashboard</a>
-    <a href="reportLogs.html">Logs</a>
-  </nav>
+<!-- ============================
+     TOP NAV BAR
+============================ -->
+<nav class="nav">
+  <a class="nav-link-left" href="index.html">Dashboard</a>
+  <span class="nav-title">Create Injury Report</span>
+  <a class="nav-link-right" href="reportLogs.html">Logs</a>
+</nav>
 
-  <!-- STEP BAR -->
-  <div class="step-indicator">
+<main class="page">
+
+  <!-- ============================
+       STEP BAR
+  ============================ -->
+  <div class="step-bar">
     <div class="step active-step" id="stepLabel1">Patient</div>
     <div class="step" id="stepLabel2">Injury</div>
     <div class="step" id="stepLabel3">Discharge</div>
     <div class="step" id="stepLabel4">Review</div>
   </div>
 
-  <!-- FORM (multi-step) -->
+  <!-- ============================
+       FORM (WIZARD)
+  ============================ -->
   <form id="injuryForm">
 
     <!-- STEP 1 -->
-    <div class="card step-card" id="step1">
-      <div class="section-title">Patient & Time</div>
+    <section class="card step-card active-step-card" id="step1">
+      <h2 class="section-title">🧍 Patient & Time</h2>
 
-      <div class="form-group">
+      <div class="field">
         <label>Time In (HHMM hrs)</label>
-        <input id="timeIn" required>
+        <input id="timeIn" type="text" required placeholder="e.g. 0930">
       </div>
 
-      <div class="form-group">
+      <div class="field">
         <label>Time Out (HHMM hrs)</label>
-        <input id="timeOut" required>
+        <input id="timeOut" type="text" required placeholder="e.g. 1045">
       </div>
 
-      <div class="form-group">
+      <div class="field">
         <label>Patient Name (Include Surname)</label>
-        <input id="patientName" required>
+        <input id="patientName" type="text" required placeholder="e.g. Tan Wei Ming">
       </div>
 
-      <div class="form-group">
+      <div class="field">
         <label>Gender</label>
         <select id="gender">
           <option>Male</option>
@@ -188,24 +74,24 @@
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="field">
         <label>Age</label>
-        <input id="age" type="number" required>
+        <input id="age" type="number" required placeholder="21">
       </div>
 
-      <div class="form-group">
-        <label>Contact No. (Optional)</label>
-        <input id="contact">
+      <div class="field">
+        <label>Contact Number</label>
+        <input id="contact" type="text" placeholder="Optional">
       </div>
 
-      <button type="button" class="btn next-btn" onclick="nextStep()">Next</button>
-    </div>
+      <button type="button" class="btn primary" onclick="nextStep()">Next</button>
+    </section>
 
     <!-- STEP 2 -->
-    <div class="card step-card" id="step2" style="display:none;">
-      <div class="section-title">Injury Details</div>
+    <section class="card step-card" id="step2">
+      <h2 class="section-title">💢 Injury Details</h2>
 
-      <div class="form-group">
+      <div class="field">
         <label>Case Type</label>
         <select id="caseType">
           <option>P3</option>
@@ -214,79 +100,85 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <label>Location (free text)</label>
-        <input id="location" required>
+      <div class="field">
+        <label>Location</label>
+        <input id="location" type="text" required placeholder="Where did the incident occur?">
       </div>
 
-      <div class="form-group">
+      <div class="field">
         <label>Mechanism of Injury (MOI)</label>
-        <textarea id="moi" rows="3" required></textarea>
+        <textarea id="moi" rows="3"></textarea>
       </div>
 
-      <div class="form-group">
+      <div class="field">
         <label>Treatment</label>
-        <textarea id="treatment" rows="3" required></textarea>
+        <textarea id="treatment" rows="3"></textarea>
       </div>
 
-      <button type="button" class="btn back-btn" onclick="prevStep()">Back</button>
-      <button type="button" class="btn next-btn" onclick="nextStep()">Next</button>
-    </div>
+      <div class="btn-row">
+        <button type="button" class="btn secondary" onclick="prevStep()">Back</button>
+        <button type="button" class="btn primary" onclick="nextStep()">Next</button>
+      </div>
+    </section>
 
     <!-- STEP 3 -->
-    <div class="card step-card" id="step3" style="display:none;">
-      <div class="section-title">Discharge</div>
+    <section class="card step-card" id="step3">
+      <h2 class="section-title">🚑 Discharge Details</h2>
 
-      <div class="form-group">
+      <div class="field">
         <label>Discharge Method</label>
         <select id="discharge">
-          <option value="self">Self-discharged and continued with activity</option>
-          <option value="ambulance">Conveyed by Ambulance</option>
+          <option value="self">Self-discharged</option>
+          <option value="ambulance">Ambulance</option>
           <option value="other">Other</option>
         </select>
       </div>
 
-      <div id="ambulanceFields" style="display:none;">
-        <div class="form-group">
+      <div id="ambulanceFields" class="hidden">
+        <div class="field">
           <label>Ambulance Alpha No.</label>
-          <input id="alphaNo">
+          <input id="alphaNo" type="text" placeholder="A312">
         </div>
 
-        <div class="form-group">
+        <div class="field">
           <label>Receiving Hospital</label>
-          <input id="hospital">
+          <input id="hospital" type="text" placeholder="SGH">
         </div>
 
-        <div class="form-group">
+        <div class="field">
           <label>Paramedic Details</label>
-          <input id="paramedic">
+          <input id="paramedic" type="text" placeholder="Name / Badge No.">
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Other Discharge (Optional)</label>
-        <input id="dischargeOther">
+      <div class="field">
+        <label>Other Discharge Method</label>
+        <input id="dischargeOther" type="text" placeholder="Optional">
       </div>
 
-      <button type="button" class="btn back-btn" onclick="prevStep()">Back</button>
-      <button type="button" class="btn next-btn" onclick="nextStep()">Next</button>
-    </div>
+      <div class="btn-row">
+        <button type="button" class="btn secondary" onclick="prevStep()">Back</button>
+        <button type="button" class="btn primary" onclick="nextStep()">Next</button>
+      </div>
+    </section>
 
     <!-- STEP 4 -->
-    <div class="card step-card" id="step4" style="display:none;">
-      <div class="section-title">Review Report</div>
+    <section class="card step-card" id="step4">
+      <h2 class="section-title">📝 Review</h2>
 
-      <div id="previewBox"></div>
+      <div id="previewBox" class="preview-box"></div>
 
-      <button id="copyButton" type="button" class="btn back-btn">Copy</button>
-      <button type="submit" class="btn next-btn">Save</button>
-
-      <button type="button" class="btn back-btn" onclick="prevStep()">Back</button>
-    </div>
+      <div class="btn-row">
+        <button type="button" id="copyButton" class="btn blue">Copy</button>
+        <button type="submit" class="btn primary">Save Report</button>
+        <button type="button" class="btn secondary" onclick="prevStep()">Back</button>
+      </div>
+    </section>
 
   </form>
-</div>
+</main>
 
+<!-- Load wizard + Firestore submit logic -->
 <script type="module" src="./js/report.js"></script>
 
 </body>
