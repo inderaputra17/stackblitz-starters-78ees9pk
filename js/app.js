@@ -23,7 +23,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAwyIghTzxPQ3veDYljtOYZg4b0EiJ5hr4",
   authDomain: "first-aid-app-8ae79.firebaseapp.com",
   projectId: "first-aid-app-8ae79",
-  storageBucket: "first-aid-app-8ae79.firebasestorage.app",
+  storageBucket: "first-aid-app-8ae79.appspot.com",
   messagingSenderId: "759107374304",
   appId: "1:759107374304:web:efb87e2c55a32e95129485"
 };
@@ -62,3 +62,4 @@ console.log(
   "%c🔥 Firebase connected — Auth + DB ready",
   "color:#E63946; font-weight:700;"
 );
+
