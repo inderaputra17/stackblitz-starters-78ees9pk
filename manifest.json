@@ -1,7 +1,7 @@
 {
   "name": "First Aid App",
   "short_name": "FirstAid",
-  "start_url": "index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#C62828",
