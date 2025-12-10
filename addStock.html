@@ -7,6 +7,12 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/addStock.css">
+
+  <!-- ✅ PWA MANIFEST -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Optional but recommended -->
+  <meta name="theme-color" content="#C62828">
 </head>
 
 <body>
@@ -95,5 +101,14 @@
 
 <!-- Page logic: load after DOM -->
 <script type="module" src="./js/addStock.js"></script>
+
+<!-- ✅ SERVICE WORKER REGISTRATION -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js")
+      .catch(err => console.error("SW registration failed:", err));
+  }
+</script>
+
 </body>
 </html>
