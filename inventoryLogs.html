@@ -1,421 +1,149 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Inventory Logs & Audit Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>Inventory Logs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="./css/styles.css">
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      background: #f4f4f4;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: 24px auto;
-      padding: 0 14px 30px;
-    }
-
-    h1 {
-      margin-bottom: 10px;
-      color: #333;
-      font-size: 24px;
-    }
-
-    nav {
-      margin-bottom: 16px;
-    }
-
-    nav a {
-      display: inline-block;
-      background: #C62828;
-      padding: 10px 14px;
-      border-radius: 6px;
-      margin-right: 8px;
-      color: white !important;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    nav a:hover {
-      background: #8E0000;
-    }
-
-    .card {
-      background: #fff;
-      padding: 16px 16px 18px;
-      border-radius: 14px;
-      margin-bottom: 18px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #C62828;
-      border-left: 4px solid #C62828;
-      padding-left: 10px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .section-title span.icon {
-      font-size: 18px;
-    }
-
-    /* KPI Tiles */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .kpi-tile {
-      background: #f7f7f7;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: left;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 4px;
-    }
-
-    .kpi-value {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .kpi-badge-ok { border-left: 4px solid #2e7d32; }
-    .kpi-badge-low { border-left: 4px solid #ef6c00; }
-    .kpi-badge-critical { border-left: 4px solid #c62828; }
-    .kpi-badge-over { border-left: 4px solid #1565c0; }
-
-    /* Critical/Low list */
-    .critical-list {
-      font-size: 13px;
-      color: #333;
-    }
-
-    .critical-item {
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .critical-item:last-child {
-      border-bottom: none;
-    }
-
-    .critical-item span.name {
-      font-weight: bold;
-    }
-
-    .critical-item span.loc {
-      color: #555;
-    }
-
-    .status-chip {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: bold;
-      color: white;
-      margin-left: 6px;
-    }
-
-    .ok { background:#2e7d32; }
-    .low { background:#ef6c00; }
-    .critical { background:#c62828; }
-    .overstock { background:#1565c0; }
-
-    /* Activity summary */
-    .activity-list {
-      font-size: 13px;
-      color: #333;
-    }
-
-    .activity-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-
-    .activity-label {
-      font-weight: 500;
-    }
-
-    .activity-count {
-      font-weight: bold;
-    }
-
-    /* Location summary */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th, td {
-      padding: 8px;
-      border-bottom: 1px solid #eee;
-      text-align: left;
-    }
-
-    th {
-      background: #f7f7f7;
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-
-    /* Filters */
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .filter-row input,
-    .filter-row select {
-      flex: 1 1 48%;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 13px;
-      box-sizing: border-box;
-    }
-
-    /* Log table */
-    .log-table th,
-    .log-table td {
-      font-size: 12px;
-    }
-
-    .log-table td.action-cell {
-      white-space: nowrap;
-    }
-
-    .type-pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .pill-add { background:#2e7d32; }
-    .pill-dec { background:#ef6c00; }
-    .pill-trans { background:#1565c0; }
-    .pill-del { background:#c62828; }
-    .pill-other { background:#6d4c41; }
-
-    .details-row td {
-      background:#fafafa;
-      font-size: 12px;
-      padding-top: 6px;
-      padding-bottom: 6px;
-    }
-
-    .details-toggle {
-      font-size: 11px;
-      color: #1565c0;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    .timestamp {
-      white-space: nowrap;
-      font-size: 11px;
-      color: #555;
-    }
-    /* Better table styling */
-.log-table th {
-  padding: 8px 6px;
-  font-size: 12px;
-  color: #444;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.log-table td {
-  padding: 10px 6px;
-  background: #fff;
-  border-radius: 6px;
-  font-size: 12.5px;
-  vertical-align: middle;
-}
-
-.log-table tr {
-  background: transparent;
-}
-
-/* Pill styling (smaller, balanced) */
-.type-pill {
-  padding: 2px 6px !important;
-  font-size: 10px !important;
-  border-radius: 8px !important;
-}
-
-/* Qty alignment */
-.qty-pos { color:#2e7d32; font-weight: bold; }
-.qty-neg { color:#c62828; font-weight: bold; }
-
-/* Details toggle */
-.details-toggle {
-  font-size: 11px;
-  color:#1565c0;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-/* Details row */
-.details-row td {
-  background:#fafafa !important;
-  border-left: 3px solid #1565c0;
-  border-radius: 6px;
-  padding: 10px;
-}
-
-  </style>
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/inventoryLogs.css">
 </head>
 
 <body>
-  <div class="container">
 
-    <h1>Inventory Logs & Summary</h1>
+<!-- 🔐 ENFORCE LOGIN + PAGE PERMISSIONS -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
 
-    <nav>
-      <a href="index.html">← Dashboard</a>
-      <a href="inventory.html">Inventory</a>
-      <a href="addStock.html">Add Stock</a>
-      <a href="transfer.html">Transfer</a>
-    </nav>
+<!-- =========================================================
+     NAVIGATION (Unified App Navigation)
+========================================================= -->
+<nav class="nav">
+  <a href="index.html" class="nav-link-left">Dashboard</a>
+  <span class="nav-title">Inventory Logs</span>
+  <a href="inventory.html" class="nav-link-right">Inventory</a>
+</nav>
 
-    <!-- SUMMARY KPI CARD -->
-    <div class="card">
-      <h2 class="section-title">
-        <span class="icon">📊</span> Inventory Overview
-      </h2>
+<main class="page">
 
-      <div class="kpi-grid">
-        <div class="kpi-tile">
-          <div class="kpi-label">Total Items</div>
-          <div id="kpiTotalItems" class="kpi-value">-</div>
-        </div>
+  <!-- =========================================================
+       KPI SUMMARY
+  ========================================================== -->
+  <section class="card">
+    <h2 class="section-title"><span>📊</span> Inventory Overview</h2>
 
-        <div class="kpi-tile kpi-badge-critical">
-          <div class="kpi-label">Critical</div>
-          <div id="kpiCritical" class="kpi-value">-</div>
-        </div>
+    <div class="kpi-grid">
+      <div class="kpi-item">
+        <div class="kpi-label">Total Items</div>
+        <div class="kpi-value" id="kpiTotalItems">-</div>
+      </div>
 
-        <div class="kpi-tile kpi-badge-low">
-          <div class="kpi-label">Low</div>
-          <div id="kpiLow" class="kpi-value">-</div>
-        </div>
+      <div class="kpi-item critical">
+        <div class="kpi-label">Critical</div>
+        <div class="kpi-value" id="kpiCritical">-</div>
+      </div>
 
-        <div class="kpi-tile kpi-badge-over">
-          <div class="kpi-label">Overstock</div>
-          <div id="kpiOver" class="kpi-value">-</div>
-        </div>
+      <div class="kpi-item low">
+        <div class="kpi-label">Low</div>
+        <div class="kpi-value" id="kpiLow">-</div>
+      </div>
+
+      <div class="kpi-item over">
+        <div class="kpi-label">Overstock</div>
+        <div class="kpi-value" id="kpiOver">-</div>
       </div>
     </div>
+  </section>
 
-    <!-- CRITICAL & LOW ITEMS -->
-    <div class="card">
-      <h2 class="section-title">
-        <span class="icon">⚠️</span> Critical & Low Stock Items
-      </h2>
-      <div id="criticalList" class="critical-list">
-        Loading…
-      </div>
-    </div>
+  <!-- =========================================================
+       CRITICAL & LOW LIST
+  ========================================================== -->
+  <section class="card">
+    <h2 class="section-title"><span>⚠️</span> Critical & Low Stock</h2>
+    <div id="criticalList" class="critical-list">Loading…</div>
+  </section>
 
-    <!-- ACTIVITY SNAPSHOT (LAST 7 DAYS) -->
-    <div class="card">
-      <h2 class="section-title">
-        <span class="icon">📆</span> Activity Snapshot (Last 7 Days)
-      </h2>
-      <div id="activitySummary" class="activity-list">
-        Loading…
-      </div>
-    </div>
+  <!-- =========================================================
+       ACTIVITY (LAST 7 DAYS)
+  ========================================================== -->
+  <section class="card">
+    <h2 class="section-title"><span>📆</span> Activity (Last 7 Days)</h2>
+    <div id="activitySummary" class="activity-list">Loading…</div>
+  </section>
 
-    <!-- LOCATION SUMMARY -->
-    <div class="card">
-      <h2 class="section-title">
-        <span class="icon">📍</span> Location Summary
-      </h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Location</th>
-            <th>Items</th>
-            <th>Low</th>
-            <th>Critical</th>
-          </tr>
-        </thead>
-        <tbody id="locationSummaryBody">
-          <tr><td colspan="4">Loading…</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <!-- =========================================================
+       LOCATION SUMMARY
+  ========================================================== -->
+  <section class="card">
+    <h2 class="section-title"><span>📍</span> Location Summary</h2>
 
-    <!-- AUDIT LOGS -->
-    <div class="card">
-    <h2 class="section-title">
-      <span class="icon">📑</span> Stock Movement Log
-    </h2>
-  
-    <!-- Filters -->
-    <div class="filter-row" style="margin-bottom: 14px;">
-      <input id="searchInput" type="text" placeholder="Search (item, location, reason…)">
-  
-      <select id="typeFilter">
-        <option value="">All actions</option>
-        <option value="add">Add / Top-up</option>
-        <option value="dec">Decrease / Usage</option>
-        <option value="transfer">Transfer</option>
-        <option value="delete">Delete</option>
-        <option value="other">Other</option>
-      </select>
-      <select id="locationFilter">
-        <option value="">All locations</option>
-      </select>
-      <select id="itemFilter">
-        <option value="">All items</option>
-      </select>
-    </div>
-  
-    <!-- Table -->
-    <table class="log-table" style="border-collapse: separate; border-spacing: 0 6px;">
+    <table class="summary-table">
       <thead>
-        <tr style="background:#f2f2f2;">
-          <th style="width:110px;">Date / Time</th>
-          <th style="width:70px;">Action</th>
-          <th>Item</th>
-          <th>Route / Location</th>
-          <th style="width:40px;">Qty</th>
-          <th style="width:50px;">More</th>
+        <tr>
+          <th>Location</th>
+          <th>Items</th>
+          <th>Low</th>
+          <th>Critical</th>
         </tr>
       </thead>
-  
-      <tbody id="auditBody"></tbody>
+
+      <tbody id="locationSummaryBody">
+        <tr><td colspan="4">Loading…</td></tr>
+      </tbody>
     </table>
-  </div>  
+  </section>
 
-  </div>
+  <!-- =========================================================
+       FILTERS + AUDIT LOG TABLE
+  ========================================================== -->
+  <section class="card">
+    <h2 class="section-title"><span>📑</span> Stock Movement Log</h2>
 
-  <script type="module" src="./js/inventoryLogs.js"></script>
+    <div class="filter-row">
+      <input id="searchInput" type="text" placeholder="Search logs…">
+
+      <select id="typeFilter">
+        <option value="">All Actions</option>
+        <option value="add">Add / Top-up</option>
+        <option value="dec">Decrease</option>
+        <option value="transfer">Transfer</option>
+        <option value="delete">Delete</option>
+      </select>
+
+      <select id="locationFilter">
+        <option value="">Loading…</option>
+      </select>
+
+      <select id="itemFilter">
+        <option value="">Loading…</option>
+      </select>
+    </div>
+
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Date / Time</th>
+          <th>Action</th>
+          <th>Item</th>
+          <th>Location / Route</th>
+          <th>Qty</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody id="auditBody">
+        <tr><td colspan="6">Loading…</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<!-- PAGE LOGIC -->
+<script type="module" src="./js/inventoryLogs.js"></script>
+
 </body>
 </html>
