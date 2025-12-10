@@ -1,255 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Transfer Stock</title>
+  <meta charset="UTF-8" />
+  <title>Transfer Inventory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      background: #f4f4f4;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-    .container {
-      max-width: 480px;
-      margin: 24px auto;
-      padding: 0 14px;
-    }
-
-    h1 {
-      font-size: 24px;
-      color: #C62828;
-      margin-bottom: 10px;
-    }
-
-    /* NAV BUTTONS */
-    nav {
-      margin-bottom: 16px;
-    }
-    nav a {
-      display: inline-block;
-      background: #C62828;
-      padding: 10px 14px;
-      border-radius: 6px;
-      margin-right: 8px;
-      color: white !important;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    nav a:hover {
-      background: #8E0000;
-    }
-
-    /* CARD */
-    .card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 14px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-      margin-bottom: 20px;
-    }
-
-    /* SECTION HEADERS */
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #B71C1C;
-      border-left: 4px solid #B71C1C;
-      padding-left: 10px;
-      margin-bottom: 12px;
-    }
-
-    /* ITEM CARD LIST */
-    .item-list {
-      max-height: 260px;
-      overflow-y: auto;
-      margin-bottom: 16px;
-    }
-
-    .item-card {
-      background: #fafafa;
-      border: 1px solid #ddd;
-      padding: 12px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: 0.15s;
-    }
-
-    .item-card:hover {
-      background: #f0f0f0;
-    }
-
-    .item-name {
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .badge {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: bold;
-      color: white;
-    }
-    .ok { background: #2e7d32; }
-    .low { background: #ef6c00; }
-    .critical { background: #c62828; }
-    .overstock { background: #1565c0; }
-
-    /* SELECT DROPDOWNS */
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-
-    /* STOCK SUMMARY BOX */
-    .summary-box {
-      background: #fff8e1;
-      border-left: 4px solid #ffb300;
-      padding: 12px;
-      border-radius: 10px;
-      margin-top: 10px;
-      display: none;
-    }
-
-    .summary-box strong { color: #bf360c; }
-
-    /* SUBMIT BUTTON */
-    .primary-btn {
-      width: 100%;
-      padding: 14px;
-      background: #C62828;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .primary-btn:hover {
-      background: #8E0000;
-    }
-
-    /* CONFIRM MODAL */
-    #confirmModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      padding: 20px;
-    }
-
-    .modal-box {
-      background: white;
-      padding: 20px;
-      border-radius: 14px;
-      width: 95%;
-      max-width: 380px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      text-align: center;
-    }
-
-    .modal-btn {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 8px;
-      border: none;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    .confirm { background: #2e7d32; color: white; }
-    .cancel { background: #b71c1c; color: white; }
-  </style>
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/transfer.css">
 </head>
 
+<!-- EARLY SESSION VALIDATION -->
+<script>
+  const user = JSON.parse(sessionStorage.getItem("faUser"));
+  if (!user) window.location.replace("login.html");
+</script>
+
 <body>
-  <div class="container">
 
-    <h1>Transfer Stock</h1>
+<!-- SECURITY CHECKS (must load BEFORE any page logic) -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
 
-    <nav>
-      <a href="index.html">← Dashboard</a>
-      <a href="inventory.html">Inventory</a>
-      <a href="addStock.html">Add Stock</a>
-    </nav>
+<!-- =========================================================
+     TOP NAV BAR
+========================================================= -->
+<nav class="nav">
+  <a href="index.html" class="nav-link-left">Dashboard</a>
+  <span class="nav-title">Transfer Inventory</span>
+  <a href="inventoryLogs.html" class="nav-link-right">Logs</a>
+</nav>
 
-    <!-- ITEM SELECTION -->
-    <div class="card">
-      <h2 class="section-title">📦 Select Item to Transfer</h2>
-      <div id="itemList" class="item-list">Loading items...</div>
-    </div>
+<main class="container">
 
-    <!-- TRANSFER FORM -->
-    <div class="card">
-      <h2 class="section-title">🔄 Transfer Details</h2>
-
-      <div class="form-group">
-        <label>From Location</label>
-        <select id="fromLocation"></select>
-      </div>
-
-      <div class="form-group">
-        <label>To Location</label>
-        <select id="toLocation"></select>
-      </div>
-
-      <div class="form-group">
-        <label>Quantity to Transfer</label>
-        <input id="transferQty" type="number" min="1" placeholder="e.g. 5">
-      </div>
-
-      <!-- Stock summary -->
-      <div id="summaryBox" class="summary-box"></div>
-
-      <button id="previewTransfer" class="primary-btn">Review Transfer</button>
-    </div>
-
+  <!-- =====================================================
+       STEP BAR
+  ====================================================== -->
+  <div class="steps">
+    <div id="step1Tab" class="step active">1. Locations</div>
+    <div id="step2Tab" class="step">2. Items</div>
+    <div id="step3Tab" class="step">3. Preview</div>
   </div>
 
-  <!-- CONFIRM MODAL -->
-  <div id="confirmModal">
-    <div class="modal-box">
-      <h3>Confirm Transfer</h3>
-      <p id="confirmText"></p>
+  <!-- =====================================================
+       STEP 1 — LOCATIONS
+  ====================================================== -->
+  <section id="step1" class="card">
+    <h2 class="section-title">Select Locations</h2>
 
-      <button id="confirmBtn" class="modal-btn confirm">Confirm</button>
-      <button id="cancelBtn" class="modal-btn cancel">Cancel</button>
+    <select id="fromLocation" class="input" aria-label="From Location"></select>
+    <select id="toLocation" class="input" aria-label="To Location"></select>
+
+    <button id="toStep2" class="btn next-btn">Next</button>
+  </section>
+
+  <!-- =====================================================
+       STEP 2 — ITEMS
+  ====================================================== -->
+  <section id="step2" class="card hidden">
+    <h2 class="section-title">Select Items to Transfer</h2>
+
+    <input 
+      id="itemSearch"
+      type="text"
+      class="input"
+      placeholder="Search items…"
+      aria-label="Search Items"
+    >
+
+    <select id="categoryFilter" class="input" aria-label="Filter by Category">
+      <option value="">All Categories</option>
+      <option value="bandage">Bandages</option>
+      <option value="medication">Medication</option>
+      <option value="equipment">Equipment</option>
+    </select>
+
+    <div id="itemList" class="item-list"></div>
+
+    <button id="backToStep1" class="btn back-btn">Back</button>
+    <button id="toStep3" class="btn next-btn">Next</button>
+  </section>
+
+  <!-- =====================================================
+       STEP 3 — PREVIEW & CONFIRM
+  ====================================================== -->
+  <section id="step3" class="card hidden">
+    <h2 class="section-title">Review Transfer</h2>
+
+    <div id="previewBox" class="preview-box"></div>
+
+    <label class="section-title" style="margin-top: 16px;">Transfer Reason (Optional)</label>
+    <select id="transferReason" class="input">
+      <option value="">None</option>
+      <option value="Restocking">Restocking</option>
+      <option value="Event Redistribution">Event Redistribution</option>
+      <option value="Excess Return">Excess Return</option>
+      <option value="Emergency Usage">Emergency Usage</option>
+      <option value="Damaged Item Replacement">Damaged Item Replacement</option>
+    </select>
+
+    <button id="backToStep2" class="btn back-btn">Back</button>
+    <button id="confirmTransfer" class="btn confirm-btn">Confirm Transfer</button>
+
+    <div id="undoBox" class="undo-box hidden">
+      Transfer completed.
+      <button id="undoBtn" class="undo-btn">Undo (2:00)</button>
     </div>
-  </div>
+  </section>
 
-  <script type="module" src="./js/transfer.js"></script>
+</main>
+
+<!-- PAGE LOGIC -->
+<script type="module" src="./js/transfer.js"></script>
+
 </body>
 </html>
