@@ -1,230 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>First Aid Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Command Center • First-Aid Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="./css/styles.css">
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#C62828">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #ececec; /* Softer grey instead of white */
-      margin: 0;
-      padding: 0;
-    }
-
-    /* ---------------- HEADER ---------------- */
-    .header {
-      background: #C62828;
-      padding: 26px 16px;
-      text-align: center;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-      box-shadow: 0 3px 14px rgba(0,0,0,0.25);
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 30px;
-      color: white;
-      font-weight: 900;
-      letter-spacing: -0.3px;
-      text-align: center;
-      width: 100%;
-    }
-
-    .subtitle {
-      margin-top: 6px;
-      font-size: 14px;
-      color: #ffecec;
-      opacity: 0.9;
-      text-align: center;
-      width: 100%;
-    }
-
-    /* ---------------- ALERT BOX ---------------- */
-    .alert-box {
-      max-width: 520px;
-      margin: 20px auto 0;
-      padding: 12px 14px;
-      background: #fff5e6; /* Softer off-white */
-      border-left: 6px solid #EF6C00;
-      border-radius: 12px;
-      color: #bf360c;
-      font-size: 14px;
-      line-height: 1.45;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .alert-box a {
-      color: #C62828;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    /* ---------------- MENU SECTION ---------------- */
-    .menu-section {
-      max-width: 520px;
-      margin: 18px auto 40px;
-      padding: 0 16px;
-    }
-
-    .menu-group-title {
-      font-weight: bold;
-      font-size: 15px;
-      color: #444;
-      margin: 22px 0 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    /* ---------------- BUTTONS ---------------- */
-    .menu-button {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 18px 12px;
-      text-align: center;
-      color: #333;
-      font-weight: bold;
-      font-size: 15px;
-      text-decoration: none;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-      transition: 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100px;
-      border: 1px solid #f0f0f0; /* Softer outline */
-    }
-
-    .menu-button:hover {
-      transform: translateY(-3px);
-      background: #fafafa;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-    }
-
-    .icon {
-      font-size: 30px;
-      margin-bottom: 6px;
-      color: #C62828;
-    }
-
-    /* ---------------- FLOATING HELP BUTTON ---------------- */
-    #helpButton {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #1565C0;
-      color: white;
-      border: none;
-      padding: 16px 18px;
-      border-radius: 50%;
-      font-size: 22px;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-      z-index: 20;
-    }
-
-    #helpButton:hover {
-      background: #0d47a1;
-    }
-  </style>
+  <!-- Dashboard CSS -->
+  <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <h1>First Aid App</h1>
-    <div class="subtitle">Event Response • Reporting • Inventory</div>
-  </div>
+<!-- 🔥 MUST LOAD FIRST: SECURITY & PERMISSION LOGIC -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
 
-  <!-- Low Stock Banner -->
-  <div id="lowStockBanner" class="alert-box" style="display:none;">
-    ⚠️ Some items are critically low. 
-    <a href="inventory.html">Review Inventory</a>
-  </div>
+<header class="topbar">
+  <h1>First Aid</h1>
+</header>
 
-  <!-- MAIN MENU -->
-  <div class="menu-section">
+<main class="container">
 
-    <div class="menu-group-title">Reporting</div>
-    <div class="menu-grid">
-      <a class="menu-button" href="report.html">
-        <div class="icon">📄</div>
-        New Injury Report
-      </a>
-
-      <a class="menu-button" href="reportLogs.html">
-        <div class="icon">🗂</div>
-        Report Logs
-      </a>
+  <!-- SUMMARY -->
+  <section class="summary-grid">
+    <div class="summary-card" id="cardReportsToday">
+      <div class="icon">🩺</div>
+      <div class="value" id="newReportsToday">0</div>
+      <p class="label">New Reports Today</p>
     </div>
 
-    <div class="menu-group-title">Inventory</div>
-    <div class="menu-grid">
-      <a class="menu-button" href="inventory.html">
-        <div class="icon">📦</div>
-        View Inventory
-      </a>
-
-      <a class="menu-button" href="addStock.html">
-        <div class="icon">➕</div>
-        Add / Top Up
-      </a>
-
-      <a class="menu-button" href="transfer.html">
-        <div class="icon">🔄</div>
-        Transfer
-      </a>
-
-      <a class="menu-button" href="inventoryLogs.html">
-        <div class="icon">📑</div>
-        Summary & Logs
-      </a>
+    <div class="summary-card" id="cardLowCritical">
+      <div class="icon">⚠️</div>
+      <div class="value" id="lowCriticalItems">0</div>
+      <p class="label">Low / Critical Items</p>
     </div>
+
+    <div class="summary-card" id="cardReportsMonth">
+      <div class="icon">📊</div>
+      <div class="value" id="reportsMonth">0</div>
+      <p class="label">Reports This Month</p>
+    </div>
+
+    <div class="summary-card" id="cardActiveEvents">
+      <div class="icon">🎪</div>
+      <div class="value" id="activeEvents">0</div>
+      <p class="label">Active Events</p>
+    </div>
+  </section>
+
+  <!-- QUICK ACTIONS -->
+  <h2 class="section-title">Quick Actions</h2>
+
+  <section class="quick-actions">
+    <a href="report.html" class="action-btn action-red"><span>📝</span> New Injury Report</a>
+    <a href="addStock.html" class="action-btn action-green"><span>➕</span> Add / Top-Up Stock</a>
+    <a href="transfer.html" class="action-btn action-yellow"><span>🔄</span> Transfer Inventory</a>
+    <a href="inventory.html" class="action-btn action-blue"><span>📦</span> View Inventory</a>
+  </section>
+
+  <!-- ALERTS -->
+  <h2 class="section-title">Alerts</h2>
+
+  <div class="admin-card alerts-panel" id="alertsPanel">
+    <p class="empty-alert">No alerts at this time.</p>
   </div>
-  <!-- Optional dynamic low stock JS -->
-  <script type="module">
-    /*
-      import { db } from "./js/app.js";
-      import { collection, getDocs }
-      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-      async function checkLowStock() {
-        const snap = await getDocs(collection(db, "inventory"));
-        let show = false;
+  <!-- ACTIVE EVENT WIDGET -->
+  <section id="eventWidget" class="admin-card event-widget hidden">
+    <h3>Active Event</h3>
+    <p id="eventName" class="event-name">Event Name</p>
 
-        snap.forEach(doc => {
-          const item = doc.data();
-          Object.values(item.locations || {}).forEach(loc => {
-            if (loc.qty <= loc.min) show = true;
-          });
-        });
+    <div class="event-stats">
+      <div class="stat-box">
+        <span id="eventCasesToday">0</span>
+        <p>Cases Today</p>
+      </div>
 
-        if (show) {
-          document.getElementById("lowStockBanner").style.display = "block";
-        }
-      }
+      <div class="stat-box">
+        <span id="eventStockUsed">0</span>
+        <p>Stock Used</p>
+      </div>
+    </div>
 
-      checkLowStock();
-    */
-  </script>
+    <a href="#" class="event-btn">View Event Summary</a>
+  </section>
+
+  <!-- TREND CHARTS -->
+  <h2 class="section-title">Monthly Trends</h2>
+
+  <div class="admin-card chart-card">
+    <canvas id="caseTrendChart"></canvas>
+  </div>
+
+  <div class="admin-card chart-card">
+    <canvas id="inventoryUsageChart"></canvas>
+  </div>
+
+</main>
+
+<!-- FLOATING ACTION BUTTON -->
+<button id="fab" class="fab">＋</button>
+
+<div class="fab-menu hidden" id="fabMenu">
+  <a href="report.html">📝 New Report</a>
+  <a href="addStock.html">➕ Add Stock</a>
+  <a href="transfer.html">🔄 Transfer</a>
+  <a href="admin.html">👤 Admin</a>
+  <a href="#" id="logoutBtn">🚪 Logout</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+
+<!-- 🔥 MUST LOAD LAST: LOGIC DEPENDS ON ELEMENTS ABOVE -->
+<script type="module" src="./js/dashboard.js"></script>
 
 </body>
 </html>
-
