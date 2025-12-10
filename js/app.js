@@ -1,6 +1,5 @@
 // ======================================================
 //  Firebase Initialization + Offline Persistence
-//  (Single Source of Truth for Firebase in the App)
 // ======================================================
 
 import { 
@@ -12,6 +11,10 @@ import {
   enableIndexedDbPersistence 
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 // ------------------------------------------------------
 //  1. Firebase Configuration (Production Config)
@@ -25,34 +28,37 @@ const firebaseConfig = {
   appId: "1:759107374304:web:efb87e2c55a32e95129485"
 };
 
-
 // ------------------------------------------------------
-//  2. Initialize Firebase (MANDATORY — Only Once)
+//  2. Initialize Firebase
 // ------------------------------------------------------
 export const app = initializeApp(firebaseConfig);
 
-
 // ------------------------------------------------------
-//  3. Firestore Instance (Global Database)
+//  3. Firestore Instance
 // ------------------------------------------------------
 export const db = getFirestore(app);
 
+// ------------------------------------------------------
+//  4. Firebase Auth (REQUIRED for Firestore Rules)
+// ------------------------------------------------------
+export const auth = getAuth(app);
+
+// 🔐 Silent Anonymous Login
+signInAnonymously(auth).catch(err => {
+  console.warn("⚠️ Anonymous auth failed:", err);
+});
 
 // ------------------------------------------------------
-//  4. Enable IndexedDB Offline Persistence
-//     Required for:
-//     - Offline login using cached staff
-//     - Offline CRUD for inventory
+//  5. Offline Persistence
 // ------------------------------------------------------
 enableIndexedDbPersistence(db).catch(err => {
   console.warn("⚠️ Firestore persistence failed:", err);
 });
 
-
 // ------------------------------------------------------
-//  5. Debug Log (Consistent with Your App Logging Style)
+//  6. Debug Logging
 // ------------------------------------------------------
 console.log(
-  "%c🔥 Firebase connected — app.js loaded with persistence enabled",
+  "%c🔥 Firebase connected — Auth + DB ready",
   "color:#E63946; font-weight:700;"
 );
