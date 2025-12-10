@@ -1,269 +1,300 @@
+// ======================================================
+// inventory.js — Cleaned + Security-Aligned Version
+// ======================================================
+
 import { db } from "./app.js";
 import {
   collection,
   doc,
-  updateDoc,
-  deleteField,
+  getDocs,
+  getDoc,
   onSnapshot,
-  addDoc,
-  serverTimestamp
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-console.log("inventory.js loaded");
 
-// UI Refs
-const container = document.getElementById("inventoryContainer");
+/* ======================================================
+   DOM ELEMENTS
+====================================================== */
+const listEl = document.getElementById("inventoryList");
+const searchInput = document.getElementById("searchInput");
+const locationFilter = document.getElementById("locationFilter");
 
-// Modal refs
-const modal = document.getElementById("modal");
-const modalQty = document.getElementById("modalQty");
-const modalSave = document.getElementById("modalSave");
-const modalCancel = document.getElementById("modalCancel");
+/* Modals */
+const editModal = document.getElementById("editLimitsModal");
+const qtyModal = document.getElementById("qtyModal");
 
-// State
-let allItems = [];
-let editItemId = null;
-let editLoc = null;
-let actionType = null;
+const editPar = document.getElementById("editPar");
+const editMin = document.getElementById("editMin");
+const editMax = document.getElementById("editMax");
 
-/* ----------------------------------------------------------
-   STATUS BADGE LOGIC
----------------------------------------------------------- */
-function getStatus(qty, par, min, max) {
-  qty = Number(qty);
-  par = Number(par ?? 0);
-  min = Number(min ?? 0);
-  max = Number(max ?? 9999);
+const qtyValue = document.getElementById("qtyValue");
+const qtyTitle = document.getElementById("qtyModalTitle");
 
-  if (qty <= min) return { label: "Critical", cls: "critical" };
-  if (qty < par) return { label: "Low", cls: "low" };
-  if (qty > max) return { label: "Overstock", cls: "overstock" };
-  return { label: "OK", cls: "ok" };
-}
 
-/* ----------------------------------------------------------
-   RENDER INVENTORY PER LOCATION
----------------------------------------------------------- */
-function renderInventory() {
-  container.innerHTML = "";
+/* ======================================================
+   STATE VARIABLES
+====================================================== */
+let items = [];
+let activeItem = null;
+let activeLocation = null;
+let qtyMode = null;
 
-  const locMap = {};
 
-  allItems.forEach(item => {
-    const locs = item.locations || {};
-    Object.keys(locs).forEach(locKey => {
-      if (!locMap[locKey]) locMap[locKey] = [];
-      locMap[locKey].push({
-        id: item.id,
-        name: item.displayName,
-        qty: locs[locKey].qty,
-        par: locs[locKey].par,
-        min: locs[locKey].min,
-        max: locs[locKey].max
-      });
-    });
+/* ======================================================
+   LOAD LOCATIONS FOR FILTER
+====================================================== */
+async function loadLocations() {
+  const snap = await getDocs(collection(db, "inventory"));
+  const locs = new Set();
+
+  snap.forEach(docSnap => {
+    Object.keys(docSnap.data().locations || {}).forEach(loc => locs.add(loc));
   });
 
-  // Render each location card
-  Object.keys(locMap).sort().forEach(loc => {
+  [...locs].sort().forEach(loc => {
+    const option = document.createElement("option");
+    option.value = loc;
+    option.textContent = loc;
+    locationFilter.appendChild(option);
+  });
+}
+
+
+/* ======================================================
+   REAL-TIME INVENTORY LISTENER
+====================================================== */
+function listenInventory() {
+  onSnapshot(collection(db, "inventory"), snap => {
+    items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderList();
+  });
+}
+
+
+/* ======================================================
+   STATUS CALCULATOR
+====================================================== */
+function getStatus(qty, par, min) {
+  if (qty <= min) return "critical";
+  if (qty < par) return "low";
+  return "ok";
+}
+
+
+/* ======================================================
+   RENDER INVENTORY LIST
+====================================================== */
+function renderList() {
+  const keyword = searchInput.value.toLowerCase();
+  const locFilter = locationFilter.value;
+
+  listEl.innerHTML = "";
+
+  items.forEach(item => {
+    if (!item.displayName.toLowerCase().includes(keyword)) return;
+
+    const locations = item.locations || {};
+    if (locFilter !== "all" && !locations[locFilter]) return;
+
+    // Determine overall item status
+    let worst = "ok";
+    Object.values(locations).forEach(loc => {
+      const st = getStatus(loc.qty, loc.par, loc.min);
+      if (st === "critical") worst = "critical";
+      else if (st === "low" && worst !== "critical") worst = "low";
+    });
+
+    const badgeClass =
+      worst === "critical"
+        ? "status-critical"
+        : worst === "low"
+        ? "status-low"
+        : "status-ok";
+
     const card = document.createElement("div");
-    card.className = "location-card";
+    card.className = "item-card";
 
-    let html = `<div class="location-header">${loc}</div>`;
+    // Header + delete item
+    card.innerHTML = `
+      <div class="item-header">
+        <div class="item-name">${item.displayName}</div>
 
-    locMap[loc].sort((a, b) => a.name.localeCompare(b.name)).forEach(item => {
-      const status = getStatus(item.qty, item.par, item.min, item.max);
-      const detailsId = `${item.id}__${loc}`;
+        <button class="action-btn btn-delete-item danger-btn">
+          Delete Item
+        </button>
 
-      html += `
-        <div class="item-row">
-          <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <div class="item-qty">
-              Qty: ${item.qty} • <span class="badge ${status.cls}">${status.label}</span>
-            </div>
-          </div>
+        <span class="status-badge ${badgeClass}">
+          ${worst.toUpperCase()}
+        </span>
+      </div>
+    `;
 
-          <div class="action-buttons">
-            <button class="btn btn-add" data-type="add" data-id="${item.id}" data-loc="${loc}">+</button>
-            <button class="btn btn-minus" data-type="minus" data-id="${item.id}" data-loc="${loc}">−</button>
-            <button class="btn btn-del" data-type="delete" data-id="${item.id}" data-loc="${loc}">🗑</button>
-            <button class="btn btn-details" data-type="details" data-key="${detailsId}">⋯</button>
-          </div>
-        </div>
+    // DELETE ITEM (FULL)
+    card.querySelector(".btn-delete-item").onclick = () =>
+      deleteItem(item.id);
 
-        <div class="details-panel" id="details-${detailsId}">
-          <div class="details-row">
-            <label>PAR:</label>
-            <input type="number" value="${item.par}" 
-                   data-id="${item.id}" data-loc="${loc}" data-field="par">
-            <button class="save-level-btn" data-save="true">Save</button>
-          </div>
+    // Location rows
+    Object.entries(locations).forEach(([locName, loc]) => {
+      const row = document.createElement("div");
+      row.className = "location-row";
 
-          <div class="details-row">
-            <label>MIN:</label>
-            <input type="number" value="${item.min}" 
-                   data-id="${item.id}" data-loc="${loc}" data-field="min">
-            <button class="save-level-btn" data-save="true">Save</button>
-          </div>
+      row.innerHTML = `
+        <div class="location-title">${locName}</div>
+        <div>Qty: ${loc.qty}</div>
+        <div>PAR: ${loc.par} &nbsp; MIN: ${loc.min} &nbsp; MAX: ${loc.max}</div>
 
-          <div class="details-row">
-            <label>MAX:</label>
-            <input type="number" value="${item.max}" 
-                   data-id="${item.id}" data-loc="${loc}" data-field="max">
-            <button class="save-level-btn" data-save="true">Save</button>
-          </div>
+        <div class="location-actions">
+          <button class="action-btn btn-edit">Edit Limits</button>
+          <button class="action-btn btn-add">Add</button>
+          <button class="action-btn btn-minus">Minus</button>
+
+          <button class="action-btn btn-delete-location danger-btn-light">
+            Delete
+          </button>
         </div>
       `;
+
+      // Edit limits modal
+      row.querySelector(".btn-edit").onclick = () =>
+        openEditLimits(item.id, locName, loc);
+
+      // Add / minus stock modal
+      row.querySelector(".btn-add").onclick = () =>
+        openQtyModal(item.id, locName, "add");
+
+      row.querySelector(".btn-minus").onclick = () =>
+        openQtyModal(item.id, locName, "minus");
+
+      // Delete location
+      row.querySelector(".btn-delete-location").onclick = () =>
+        deleteLocation(item.id, locName);
+
+      card.appendChild(row);
     });
 
-    card.innerHTML = html;
-    container.appendChild(card);
+    listEl.appendChild(card);
   });
 }
 
-/* ----------------------------------------------------------
-   FIRESTORE LISTENER
----------------------------------------------------------- */
-onSnapshot(collection(db, "inventory"), snap => {
-  allItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderInventory();
-});
 
-/* ----------------------------------------------------------
-   MODAL HANDLING
----------------------------------------------------------- */
-modalCancel.onclick = () => (modal.style.display = "none");
+/* ======================================================
+   DELETE ITEM (FULL)
+====================================================== */
+async function deleteItem(itemId) {
+  if (!confirm("Delete entire item?")) return;
+  await deleteDoc(doc(db, "inventory", itemId));
+}
 
-modalSave.onclick = async () => {
-  const amount = Number(modalQty.value);
-  if (!amount || amount < 1) {
-    alert("Enter a valid number.");
+
+/* ======================================================
+   DELETE LOCATION — auto-delete item if last location
+====================================================== */
+async function deleteLocation(itemId, locName) {
+  if (!confirm(`Delete location "${locName}"?`)) return;
+
+  const ref = doc(db, "inventory", itemId);
+  const snap = await getDoc(ref);
+  const data = snap.data();
+
+  if (!data?.locations) return;
+
+  delete data.locations[locName];
+  const remaining = Object.keys(data.locations).length;
+
+  if (remaining === 0) {
+    await deleteDoc(ref);
     return;
   }
 
-  const item = allItems.find(i => i.id === editItemId);
-  if (!item) return;
+  await updateDoc(ref, { locations: data.locations });
+}
 
-  const itemRef = doc(db, "inventory", editItemId);
-  const currentQty = item.locations?.[editLoc]?.qty ?? 0;
-  let newQty = currentQty;
 
-  // ADD
-  if (actionType === "add") {
-    newQty = currentQty + amount;
+/* ======================================================
+   MODAL OPENERS
+====================================================== */
+function openEditLimits(itemId, locName, loc) {
+  activeItem = itemId;
+  activeLocation = locName;
 
-    await updateDoc(itemRef, {
-      [`locations.${editLoc}.qty`]: newQty
-    });
+  editPar.value = loc.par;
+  editMin.value = loc.min;
+  editMax.value = loc.max;
 
-    await log("increase", item.displayName, editLoc, amount, "Manual add");
-  }
+  editModal.classList.remove("hidden");
+}
 
-  // MINUS
-  if (actionType === "minus") {
-    const reason = prompt("Reason for reducing stock?");
-    if (!reason) return alert("Reason required.");
+function openQtyModal(itemId, locName, mode) {
+  activeItem = itemId;
+  activeLocation = locName;
+  qtyMode = mode;
 
-    newQty = Math.max(0, currentQty - amount);
+  qtyValue.value = "";
+  qtyTitle.textContent = mode === "add" ? "Add Stock" : "Minus Stock";
 
-    await updateDoc(itemRef, {
-      [`locations.${editLoc}.qty`]: newQty
-    });
+  qtyModal.classList.remove("hidden");
+}
 
-    await log("decrease", item.displayName, editLoc, -amount, reason);
-  }
 
-  modal.style.display = "none";
+/* ======================================================
+   SAVE EDIT LIMITS
+====================================================== */
+document.getElementById("saveEditLimits").onclick = async () => {
+  const ref = doc(db, "inventory", activeItem);
+
+  await updateDoc(ref, {
+    [`locations.${activeLocation}.par`]: Number(editPar.value),
+    [`locations.${activeLocation}.min`]: Number(editMin.value),
+    [`locations.${activeLocation}.max`]: Number(editMax.value)
+  });
+
+  editModal.classList.add("hidden");
 };
 
-/* ----------------------------------------------------------
-   BUTTON HANDLERS
----------------------------------------------------------- */
-document.addEventListener("click", async e => {
-  const type = e.target.dataset.type;
 
-  if (!type) return;
+/* ======================================================
+   APPLY QTY CHANGE
+====================================================== */
+document.getElementById("saveQtyModal").onclick = async () => {
+  const value = Number(qtyValue.value);
+  if (value <= 0) return alert("Enter valid number");
 
-  const itemId = e.target.dataset.id;
-  const loc = e.target.dataset.loc;
+  const item = items.find(i => i.id === activeItem);
+  const currentQty = item.locations[activeLocation].qty;
 
-  // ADD / MINUS (open modal)
-  if (type === "add" || type === "minus") {
-    actionType = type;
-    editItemId = itemId;
-    editLoc = loc;
-    modalQty.value = "";
-    modal.style.display = "flex";
-    return;
-  }
+  const newQty = qtyMode === "add"
+    ? currentQty + value
+    : currentQty - value;
 
-  // DELETE
-  if (type === "delete") {
-    const item = allItems.find(i => i.id === itemId);
-    if (!item) return;
-
-    if (!confirm(`Delete "${item.displayName}" from ${loc}?`)) return;
-
-    const itemRef = doc(db, "inventory", itemId);
-
-    await updateDoc(itemRef, {
-      [`locations.${loc}`]: deleteField()
-    });
-
-    await log("delete", item.displayName, loc, 0, "Deleted from location");
-    return;
-  }
-
-  // DETAILS PANEL TOGGLE
-  if (type === "details") {
-    const key = e.target.dataset.key;
-    const panel = document.getElementById(`details-${key}`);
-    if (panel) {
-      panel.style.display = panel.style.display === "block" ? "none" : "block";
-    }
-    return;
-  }
-});
-
-/* ----------------------------------------------------------
-   SAVE PAR/MIN/MAX
----------------------------------------------------------- */
-document.addEventListener("click", async e => {
-  if (!e.target.dataset.save) return;
-
-  const row = e.target.closest(".details-row");
-  const input = row.querySelector("input");
-
-  const field = input.dataset.field;
-  const itemId = input.dataset.id;
-  const loc = input.dataset.loc;
-  const newVal = Number(input.value);
-
-  if (isNaN(newVal) || newVal < 0) return alert("Invalid number.");
-
-  const itemRef = doc(db, "inventory", itemId);
-
-  await updateDoc(itemRef, {
-    [`locations.${loc}.${field}`]: newVal
+  await updateDoc(doc(db, "inventory", activeItem), {
+    [`locations.${activeLocation}.qty`]: newQty
   });
 
-  const item = allItems.find(i => i.id === itemId);
+  qtyModal.classList.add("hidden");
+};
 
-  await log(`update-${field}`, item.displayName, loc, 0, `${field.toUpperCase()} updated`);
-  alert(`${field.toUpperCase()} updated.`);
-});
 
-/* ----------------------------------------------------------
-   LOGGING FUNCTION
----------------------------------------------------------- */
-async function log(type, item, location, qty, reason) {
-  await addDoc(collection(db, "inventoryLogs"), {
-    type,
-    item,
-    location,
-    qty,
-    reason,
-    timestamp: serverTimestamp()
-  });
-}
+/* ======================================================
+   CLOSE MODALS
+====================================================== */
+document.getElementById("closeEditLimits").onclick = () =>
+  editModal.classList.add("hidden");
+
+document.getElementById("closeQtyModal").onclick = () =>
+  qtyModal.classList.add("hidden");
+
+
+/* ======================================================
+   EVENT LISTENERS
+====================================================== */
+searchInput.addEventListener("input", renderList);
+locationFilter.addEventListener("change", renderList);
+
+
+/* ======================================================
+   INIT
+====================================================== */
+loadLocations();
+listenInventory();
