@@ -1,1 +1,114 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <title>Command Center • First-Aid Dashboard</title> <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Inter Font --> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"> <!-- Dashboard CSS --> <link rel="stylesheet" href="./css/dashboard.css"> <!-- ✅ PWA Manifest --> <link rel="manifest" href="/manifest.json"> <!-- Recommended for PWA appearance --> <meta name="theme-color" content="#C62828"> </head> <body> <!-- 🔥 MUST LOAD FIRST: SECURITY & PERMISSION LOGIC --> <script src="./js/session-check.js"></script> <script src="./js/permissions-check.js"></script> <header class="topbar"> <h1>First Aid</h1> </header> <main class="container"> <!-- SUMMARY --> <section class="summary-grid"> <div class="summary-card" id="cardReportsToday"> <div class="icon">🩺</div> <div class="value" id="newReportsToday">0</div> <p class="label">New Reports Today</p> </div> <div class="summary-card" id="cardLowCritical"> <div class="icon">⚠️</div> <div class="value" id="lowCriticalItems">0</div> <p class="label">Low / Critical Items</p> </div> <div class="summary-card" id="cardReportsMonth"> <div class="icon">📊</div> <div class="value" id="reportsMonth">0</div> <p class="label">Reports This Month</p> </div> <div class="summary-card" id="cardActiveEvents"> <div class="icon">🎪</div> <div class="value" id="activeEvents">0</div> <p class="label">Active Events</p> </div> </section> <!-- QUICK ACTIONS --> <h2 class="section-title">Quick Actions</h2> <section class="quick-actions"> <a href="report.html" class="action-btn action-red"><span>📝</span> New Injury Report</a> <a href="addStock.html" class="action-btn action-green"><span>➕</span> Add / Top-Up Stock</a> <a href="transfer.html" class="action-btn action-yellow"><span>🔄</span> Transfer Inventory</a> <a href="inventory.html" class="action-btn action-blue"><span>📦</span> View Inventory</a> </section> <!-- ALERTS --> <h2 class="section-title">Alerts</h2> <div class="admin-card alerts-panel" id="alertsPanel"> <p class="empty-alert">No alerts at this time.</p> </div> <!-- ACTIVE EVENT WIDGET --> <section id="eventWidget" class="admin-card event-widget hidden"> <h3>Active Event</h3> <p id="eventName" class="event-name">Event Name</p> <div class="event-stats"> <div class="stat-box"> <span id="eventCasesToday">0</span> <p>Cases Today</p> </div> <div class="stat-box"> <span id="eventStockUsed">0</span> <p>Stock Used</p> </div> </div> <a href="#" class="event-btn">View Event Summary</a> </section> <!-- TREND CHARTS --> <h2 class="section-title">Monthly Trends</h2> <div class="admin-card chart-card"> <canvas id="caseTrendChart"></canvas> </div> <div class="admin-card chart-card"> <canvas id="inventoryUsageChart"></canvas> </div> </main> <!-- FLOATING ACTION BUTTON --> <button id="fab" class="fab">＋</button> <div class="fab-menu hidden" id="fabMenu"> <a href="report.html">📝 New Report</a> <a href="addStock.html">➕ Add Stock</a> <a href="transfer.html">🔄 Transfer</a> <a href="admin.html">👤 Admin</a> <a href="#" id="logoutBtn">🚪 Logout</a> </div> <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script> <!-- 🔥 MUST LOAD LAST: LOGIC DEPENDS ON ELEMENTS ABOVE --> <script type="module" src="./js/dashboard.js"></script> <!-- ✅ SERVICE WORKER REGISTRATION --> <script> if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/service-worker.js") .catch(err => console.error("SW registration failed:", err)); } </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Command Center • First-Aid Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Inter Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="./css/dashboard.css" />
+    <!-- ✅ PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Recommended for PWA appearance -->
+    <meta name="theme-color" content="#C62828" />
+  </head>
+  <body>
+    <!-- 🔥 MUST LOAD FIRST: SECURITY & PERMISSION LOGIC -->
+    <script src="./js/session-check.js"></script>
+    <script src="./js/permissions-check.js"></script>
+    <header class="topbar"><h1>First Aid</h1></header>
+    <main class="container">
+      <!-- SUMMARY -->
+      <section class="summary-grid">
+        <div class="summary-card" id="cardReportsToday">
+          <div class="icon">🩺</div>
+          <div class="value" id="newReportsToday">0</div>
+          <p class="label">New Reports Today</p>
+        </div>
+        <div class="summary-card" id="cardLowCritical">
+          <div class="icon">⚠️</div>
+          <div class="value" id="lowCriticalItems">0</div>
+          <p class="label">Low / Critical Items</p>
+        </div>
+        <div class="summary-card" id="cardReportsMonth">
+          <div class="icon">📊</div>
+          <div class="value" id="reportsMonth">0</div>
+          <p class="label">Reports This Month</p>
+        </div>
+        <div class="summary-card" id="cardActiveEvents">
+          <div class="icon">🎪</div>
+          <div class="value" id="activeEvents">0</div>
+          <p class="label">Active Events</p>
+        </div>
+      </section>
+      <!-- QUICK ACTIONS -->
+      <h2 class="section-title">Quick Actions</h2>
+      <section class="quick-actions">
+        <a href="report.html" class="action-btn action-red"
+          ><span>📝</span> New Injury Report</a
+        >
+        <a href="addStock.html" class="action-btn action-green"
+          ><span>➕</span> Add / Top-Up Stock</a
+        >
+        <a href="transfer.html" class="action-btn action-yellow"
+          ><span>🔄</span> Transfer Inventory</a
+        >
+        <a href="inventory.html" class="action-btn action-blue"
+          ><span>📦</span> View Inventory</a
+        >
+      </section>
+      <!-- ALERTS -->
+      <h2 class="section-title">Alerts</h2>
+      <div class="admin-card alerts-panel" id="alertsPanel">
+        <p class="empty-alert">No alerts at this time.</p>
+      </div>
+      <!-- ACTIVE EVENT WIDGET -->
+      <section id="eventWidget" class="admin-card event-widget hidden">
+        <h3>Active Event</h3>
+        <p id="eventName" class="event-name">Event Name</p>
+        <div class="event-stats">
+          <div class="stat-box">
+            <span id="eventCasesToday">0</span>
+            <p>Cases Today</p>
+          </div>
+          <div class="stat-box">
+            <span id="eventStockUsed">0</span>
+            <p>Stock Used</p>
+          </div>
+        </div>
+        <a href="#" class="event-btn">View Event Summary</a>
+      </section>
+      <!-- TREND CHARTS -->
+      <h2 class="section-title">Monthly Trends</h2>
+      <div class="admin-card chart-card">
+        <canvas id="caseTrendChart"></canvas>
+      </div>
+      <div class="admin-card chart-card">
+        <canvas id="inventoryUsageChart"></canvas>
+      </div>
+    </main>
+    <!-- FLOATING ACTION BUTTON -->
+    <button id="fab" class="fab">＋</button>
+    <div class="fab-menu hidden" id="fabMenu">
+      <a href="report.html">📝 New Report</a>
+      <a href="addStock.html">➕ Add Stock</a>
+      <a href="transfer.html">🔄 Transfer</a> <a href="admin.html">👤 Admin</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+    <!-- 🔥 MUST LOAD LAST: LOGIC DEPENDS ON ELEMENTS ABOVE -->
+    <script type="module" src="./js/dashboard.js"></script>
+    <!-- ✅ SERVICE WORKER REGISTRATION -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('/service-worker.js')
+          .catch((err) => console.error('SW registration failed:', err));
+      }
+    </script>
+  </body>
+</html>
