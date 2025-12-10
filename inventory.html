@@ -5,245 +5,87 @@
   <title>Inventory Overview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      background: #f4f6f8;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 20px;
-    }
-
-    .page-title {
-      font-size: 26px;
-      font-weight: bold;
-      color: #C62828;
-      margin-bottom: 10px;
-      text-align: left;
-    }
-
-    /* NAV */
-    nav {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    nav a {
-      background: #C62828;
-      padding: 10px 14px;
-      border-radius: 6px;
-      color: white !important;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    nav a:hover {
-      background: #8E0000;
-    }
-
-    /* LOCATION CARDS */
-    .location-card {
-      background: white;
-      padding: 20px;
-      border-radius: 14px;
-      margin-bottom: 24px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    }
-
-    .location-header {
-      font-size: 20px;
-      font-weight: bold;
-      color: #C62828;
-      margin-bottom: 15px;
-    }
-
-    /* ITEM ROW */
-    .item-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .item-info {
-      flex: 1;
-    }
-
-    .item-name {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .item-qty {
-      font-size: 13px;
-      color: #444;
-    }
-
-    /* STATUS BADGES */
-    .badge {
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .ok { background: #2e7d32; }
-    .low { background: #ef6c00; }
-    .critical { background: #c62828; }
-    .overstock { background: #1565c0; }
-
-    /* ICON BUTTONS */
-    .action-buttons {
-      display: flex;
-      gap: 6px;
-    }
-
-    .btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-add { background: #2e7d32; }
-    .btn-minus { background: #ef6c00; }
-    .btn-del { background: #c62828; }
-    .btn-details { background: #1565c0; font-size: 16px; }
-
-    .btn:hover { opacity: 0.85; }
-
-    /* DETAILS PANEL */
-    .details-panel {
-      display: none;
-      background: #f9f9f9;
-      padding: 12px;
-      border-radius: 10px;
-      margin-top: 12px;
-    }
-
-    .details-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .details-row label {
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .details-row input {
-      width: 70px;
-      padding: 6px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-
-    .save-level-btn {
-      background: #1565c0;
-      color: white;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    /* MODAL */
-    #modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    #modalBox {
-      background: white;
-      width: 320px;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    #modalBox h3 {
-      margin-top: 0;
-    }
-
-    #modalQty {
-      width: 100%;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-top: 10px;
-    }
-
-    .modal-btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      margin-top: 10px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .modal-btn.save { background: #2e7d32; color:white; }
-    .modal-btn.cancel { background: #666; color:white; }
-
-  </style>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/inventory.css">
 </head>
 
 <body>
-  <div class="container">
 
-    <h1 class="page-title">Inventory Overview</h1>
+<!-- 🔐 Enforce login + permission BEFORE page loads -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
 
-    <nav>
-      <a href="index.html">← Dashboard</a>
-      <a href="addStock.html">Add Stock</a>
-      <a href="inventoryLogs.html">Logs & Summary</a>
-    </nav>
+<!-- ============================
+     UNIFIED FIRST-AID NAV BAR
+============================ -->
+<nav class="nav">
+  <a class="nav-link-left" href="index.html">Dashboard</a>
+  <span class="nav-title">Inventory</span>
+  <a class="nav-link-right" href="transfer.html">Transfer</a>
+</nav>
 
-    <div id="inventoryContainer">Loading…</div>
+<main class="container">
 
+  <!-- FILTER BAR -->
+  <div class="card filter-card">
+    <input id="searchInput" type="text" class="form-input" placeholder="Search item name…">
+    
+    <select id="locationFilter" class="form-input">
+      <option value="all">All Locations</option>
+    </select>
   </div>
 
-  <!-- Quantity Modal -->
-  <div id="modal">
-    <div id="modalBox">
-      <h3>Adjust Quantity</h3>
-      <label>Enter amount</label>
-      <input id="modalQty" type="number" min="1">
+  <!-- LIST -->
+  <section id="inventoryList"></section>
 
-      <button id="modalSave" class="modal-btn save">Confirm</button>
-      <button id="modalCancel" class="modal-btn cancel">Cancel</button>
+</main>
+
+<!-- EDIT LIMITS MODAL -->
+<div id="editLimitsModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Edit Stock Limits</h2>
+
+    <div class="form-group">
+      <label>PAR</label>
+      <input id="editPar" type="number" class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label>MIN</label>
+      <input id="editMin" type="number" class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label>MAX</label>
+      <input id="editMax" type="number" class="form-input">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn secondary" id="closeEditLimits">Cancel</button>
+      <button class="btn primary" id="saveEditLimits">Save</button>
     </div>
   </div>
+</div>
 
-  <script type="module" src="./js/inventory.js"></script>
+<!-- UPDATE QTY MODAL -->
+<div id="qtyModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="qtyModalTitle">Update Stock</h2>
+
+    <div class="form-group">
+      <label>Quantity</label>
+      <input id="qtyValue" type="number" class="form-input">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn secondary" id="closeQtyModal">Cancel</button>
+      <button class="btn primary" id="saveQtyModal">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE SCRIPT -->
+<script type="module" src="./js/inventory.js"></script>
+
 </body>
 </html>
