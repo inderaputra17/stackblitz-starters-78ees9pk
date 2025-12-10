@@ -10,6 +10,12 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="./css/transfer.css">
+
+  <!-- ✅ PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Recommended PWA Theme Color -->
+  <meta name="theme-color" content="#C62828">
 </head>
 
 <!-- EARLY SESSION VALIDATION -->
@@ -114,6 +120,14 @@
 
 <!-- PAGE LOGIC -->
 <script type="module" src="./js/transfer.js"></script>
+
+<!-- ✅ SERVICE WORKER REGISTRATION -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js")
+      .catch(err => console.error("SW registration failed:", err));
+  }
+</script>
 
 </body>
 </html>
