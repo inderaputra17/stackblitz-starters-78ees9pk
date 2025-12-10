@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login • First Aid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/login.css">
+</head>
+
+<body>
+
+<div class="login-container">
+
+  <h1 class="title">First Aid Login</h1>
+
+  <div class="card login-box">
+
+    <label>Enter 6-Digit PIN</label>
+
+    <!-- Correct aligned row -->
+    <div class="input-row">
+      <input 
+        id="loginPin"
+        type="password"
+        class="input"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+      >
+      <button id="showPin" class="btn small-btn">Show</button>
+    </div>
+
+    <button id="loginBtn" class="btn primary-btn">Login</button>
+
+    <p id="errorMsg" class="error hidden">Invalid PIN. Try again.</p>
+  </div>
+
+</div>
+
+<!-- SAFE: Only login.js is needed here -->
+<script type="module" src="./js/login.js"></script>
+
+</body>
+</html>
