@@ -1,7 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Access Denied</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#C62828">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
   <style>
     body {
       font-family: Inter, sans-serif;
@@ -12,6 +23,7 @@
       height: 100vh;
       color: #C62828;
       text-align: center;
+      margin: 0;
     }
     .box {
       background: #fff;
@@ -31,6 +43,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <div class="box">
@@ -38,6 +51,14 @@
   <p>You do not have permission to view this page.</p>
   <a href="index.html">Return to Dashboard</a>
 </div>
+
+<!-- Service Worker -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js")
+      .catch(err => console.error("SW registration failed:", err));
+  }
+</script>
 
 </body>
 </html>
