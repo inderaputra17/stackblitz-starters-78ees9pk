@@ -1,230 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Add / Top-Up Inventory</title>
+  <meta charset="UTF-8" />
+  <title>Add / Top-Up Stock</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      background: #f4f4f4;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: 24px auto;
-      padding: 0 14px 30px;
-    }
-
-    h1 {
-      font-size: 24px;
-      color: #C62828;
-      margin-bottom: 10px;
-    }
-
-    /* Top nav (same style as inventory.html) */
-    nav {
-      margin-bottom: 16px;
-    }
-
-    nav a {
-      display: inline-block;
-      background: #C62828;
-      padding: 10px 14px;
-      border-radius: 6px;
-      margin-right: 8px;
-      color: white !important;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    nav a:hover {
-      background: #8E0000;
-    }
-
-    /* Card like inventory */
-    .card {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 14px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #B71C1C;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      border-left: 4px solid #B71C1C;
-      padding-left: 10px;
-    }
-
-    .section-title span.icon {
-      font-size: 18px;
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 6px;
-    }
-
-    .form-input,
-    select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      background: #fff;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-
-    .inline-btn {
-      background: #1565C0;
-      padding: 8px 10px;
-      border-radius: 6px;
-      color: white;
-      font-size: 13px;
-      border: none;
-      cursor: pointer;
-      margin-top: 6px;
-      font-weight: bold;
-    }
-
-    .inline-btn:hover {
-      background: #0d47a1;
-    }
-
-    .advanced-toggle {
-      margin-top: 8px;
-      font-size: 14px;
-      font-weight: bold;
-      color: #1565C0;
-      cursor: pointer;
-    }
-
-    #advSection {
-      display: none;
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #fafafa;
-      border: 1px solid #ddd;
-    }
-
-    .primary-btn {
-      width: 100%;
-      background: #C62828;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 12px;
-    }
-
-    .primary-btn:hover {
-      background: #8E0000;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/addStock.css">
 </head>
 
 <body>
-  <div class="container">
+<!-- 🔐 Security & permissions: run before page logic -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
 
-    <h1>Add / Top-Up Inventory</h1>
+<!-- ============================
+     UNIFIED FIRST-AID NAV BAR
+============================ -->
+<nav class="nav">
+  <a class="nav-link-left" href="index.html">Dashboard</a>
+  <span class="nav-title">Add / Top-Up Stock</span>
+  <a class="nav-link-right" href="inventoryLogs.html">Logs</a>
+</nav>
 
-    <nav>
-      <a href="index.html">← Dashboard</a>
-      <a href="inventory.html">Inventory</a>
-      <a href="transfer.html">Transfer Stock</a>
-    </nav>
+<main class="page">
 
-    <div class="card">
-      <form id="addStockForm">
+  <div class="card">
+    <form id="addStockForm">
 
-        <!-- Item section -->
-        <h2 class="section-title">
-          <span class="icon">📦</span> Item Details
-        </h2>
+      <!-- ITEM DETAILS -->
+      <h2 class="section-title">📦 Item Details</h2>
 
-        <div class="form-group">
-          <label>Select Existing Item</label>
-          <select id="itemNameSelect" class="form-input">
-            <option value="">Loading…</option>
-          </select>
+      <div class="field">
+        <label>Select Existing Item</label>
+        <select id="itemNameSelect" class="input">
+          <option value="">Loading…</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Or Enter New Item Name</label>
+        <input id="itemName" class="input" type="text" placeholder="e.g. Gloves, Hydrogen Peroxide">
+      </div>
+
+      <div class="field">
+        <label>Quantity to Add</label>
+        <input id="itemQty" class="input" type="number" min="1" placeholder="10" required>
+      </div>
+
+      <!-- LOCATION -->
+      <h2 class="section-title">📍 Stock Location</h2>
+
+      <div class="field">
+        <label>Select Location</label>
+        <select id="locationSelect" class="input">
+          <option value="">Loading…</option>
+        </select>
+      </div>
+
+      <button type="button" id="addNewLocationBtn" class="btn blue small">
+        ➕ Add New Location
+      </button>
+
+      <!-- ADVANCED SETTINGS -->
+      <h2 class="section-title">⚙️ Advanced Settings</h2>
+
+      <div id="advToggle" class="adv-toggle">
+        Show Advanced Settings ▼
+      </div>
+
+      <div id="advSection" class="adv-panel hidden">
+        <div class="field">
+          <label>Default PAR (Reorder Level)</label>
+          <input id="parDefault" class="input" type="number" min="0" placeholder="Auto if empty">
         </div>
 
-        <div class="form-group">
-          <label>Or Enter New Item Name</label>
-          <input id="itemName" class="form-input" type="text"
-                 placeholder="e.g. Gloves, Saline 0.9%, Bandage Roll">
+        <div class="field">
+          <label>Default MIN</label>
+          <input id="minDefault" class="input" type="number" min="0" placeholder="Auto if empty">
         </div>
 
-        <div class="form-group">
-          <label>Quantity to Add</label>
-          <input id="itemQty" class="form-input" type="number" min="1" placeholder="e.g. 10" required>
+        <div class="field">
+          <label>Default MAX</label>
+          <input id="maxDefault" class="input" type="number" min="0" placeholder="Auto if empty">
         </div>
+      </div>
 
-        <!-- Location section -->
-        <h2 class="section-title">
-          <span class="icon">📍</span> Stock Location
-        </h2>
+      <button type="submit" class="btn primary full">Save Stock</button>
 
-        <div class="form-group">
-          <label>Select Location</label>
-          <select id="locationSelect" class="form-input">
-            <option value="">Loading…</option>
-          </select>
-          <button type="button" id="addNewLocationBtn" class="inline-btn">+ Add New Location</button>
-        </div>
-
-        <!-- Advanced section -->
-        <h2 class="section-title">
-          <span class="icon">⚙️</span> Advanced Settings
-        </h2>
-
-        <div id="advToggle" class="advanced-toggle">
-          Show Advanced Settings (PAR / MIN / MAX) ▼
-        </div>
-
-        <div id="advSection">
-          <div class="form-group">
-            <label>Default PAR</label>
-            <input id="parDefault" class="form-input" type="number" min="0" placeholder="Auto if left empty">
-          </div>
-          <div class="form-group">
-            <label>Default MIN</label>
-            <input id="minDefault" class="form-input" type="number" min="0" placeholder="Auto if left empty">
-          </div>
-          <div class="form-group">
-            <label>Default MAX</label>
-            <input id="maxDefault" class="form-input" type="number" min="0" placeholder="Auto if left empty">
-          </div>
-        </div>
-
-        <button type="submit" class="primary-btn">Save Stock</button>
-      </form>
-    </div>
-
+    </form>
   </div>
 
-  <script type="module" src="./js/addStock.js"></script>
+</main>
+
+<!-- Page logic: load after DOM -->
+<script type="module" src="./js/addStock.js"></script>
 </body>
 </html>
