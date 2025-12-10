@@ -1,203 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Injury Report Logs</title>
+  <meta charset="UTF-8" />
+  <title>Report Logs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="./css/styles.css">
-
-  <style>
-    body {
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    .container {
-      max-width: 700px;
-      margin: 30px auto;
-      padding: 0 16px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #C62828;
-      margin-bottom: 10px;
-    }
-
-    nav {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    nav a {
-      display: inline-block;
-      background: #C62828;
-      padding: 10px 14px;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: bold;
-      text-decoration: none;
-      margin: 4px;
-    }
-
-    nav a:hover {
-      background: #8E0000;
-    }
-
-    /* CASE SUMMARY BAR */
-    .summary-bar {
-      display: flex;
-      justify-content: space-between;
-      background: #ffffff;
-      padding: 12px 16px;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-      margin-bottom: 20px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .summary-item {
-      padding: 6px 12px;
-      border-radius: 6px;
-      color: white;
-    }
-
-    .summary-P1 { background: #b71c1c; }
-    .summary-P2 { background: #ef6c00; }
-    .summary-P3 { background: #2e7d32; }
-
-    /* SEARCH + FILTER */
-    .filter-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .filter-row input,
-    .filter-row select {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-
-    /* LOG CARDS */
-    .log-card {
-      background: #fff;
-      padding: 18px;
-      border-radius: 12px;
-      margin-bottom: 18px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-    }
-
-    .header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .patient-name {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    /* CASE BADGE COLORS */
-    .case-badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .case-P1 { background: #b71c1c; }
-    .case-P2 { background: #ef6c00; }
-    .case-P3 { background: #2e7d32; }
-
-    .meta {
-      font-size: 13px;
-      color: #555;
-      margin-top: 6px;
-      margin-bottom: 10px;
-    }
-
-    .report-preview {
-      font-size: 14px;
-      white-space: pre-wrap;
-      background: #fafafa;
-      border-radius: 8px;
-      padding: 12px;
-      border: 1px solid #eee;
-      margin-bottom: 12px;
-    }
-
-    /* ACTION BUTTONS */
-    .action-row {
-      display: flex;
-      justify-content: flex-end;
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    .action-btn {
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .copy-btn { background: #1565C0; }
-    .edit-btn { background: #2e7d32; }
-    .delete-btn { background: #c62828; }
-
-    .copy-btn:hover { background: #0d47a1; }
-    .edit-btn:hover { background: #1b5e20; }
-    .delete-btn:hover { background: #8e0000; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/reportLogs.css">
 </head>
 
+<!-- EARLY SESSION VALIDATION -->
+<script>
+  const user = JSON.parse(sessionStorage.getItem("faUser"));
+  if (!user) window.location.replace("login.html");
+</script>
+
 <body>
-  <div class="container">
 
-    <h1>Injury Report Logs</h1>
+<!-- SECURITY SCRIPTS (must load BEFORE page logic) -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
 
-    <nav>
-      <a href="index.html">← Dashboard</a>
-      <a href="report.html">Create Report</a>
-    </nav>
+<!-- =========================================================
+     NAV BAR
+========================================================= -->
+<nav class="nav">
+  <a href="index.html" class="nav-btn nav-left">Dashboard</a>
+  <span class="nav-title">Report Logs</span>
+  <a href="report.html" class="nav-btn nav-right">New Report</a>
+</nav>
 
-    <!-- CASE SUMMARY BAR -->
-    <div class="summary-bar">
-      <div class="summary-item summary-P1">P1: <span id="countP1">0</span></div>
-      <div class="summary-item summary-P2">P2: <span id="countP2">0</span></div>
-      <div class="summary-item summary-P3">P3: <span id="countP3">0</span></div>
+<main class="page">
+
+  <!-- SUMMARY (P1 / P2 / P3 COUNTERS) -->
+  <section class="summary">
+    <div class="sum-box p1">P1 • <span id="countP1">0</span></div>
+    <div class="sum-box p2">P2 • <span id="countP2">0</span></div>
+    <div class="sum-box p3">P3 • <span id="countP3">0</span></div>
+  </section>
+
+  <!-- ANALYTICS SECTION -->
+  <section class="analytics">
+
+    <div class="card trend">
+      <h2>Case Trend</h2>
+      <canvas id="caseTrendChart"></canvas>
     </div>
 
-    <!-- SEARCH + FILTER -->
-    <div class="filter-row">
-      <input type="text" id="searchInput" placeholder="Search by name, keyword, location…">
-      <select id="caseFilter">
-        <option value="all">All Case Types</option>
-        <option value="P1">P1 Only</option>
-        <option value="P2">P2 Only</option>
-        <option value="P3">P3 Only</option>
+    <div class="card">
+      <h2>Hotspots</h2>
+      <div id="locationHeatmap" class="heatmap"></div>
+
+      <h2 class="sub">Insights</h2>
+      <div id="insightSummary"></div>
+    </div>
+
+  </section>
+
+  <!-- FILTERS -->
+  <section class="filters">
+    <input id="searchInput" placeholder="Search reports…">
+    <select id="caseFilter">
+      <option value="all">All</option>
+      <option value="P1">P1</option>
+      <option value="P2">P2</option>
+      <option value="P3">P3</option>
+    </select>
+  </section>
+
+  <!-- REPORTS GRID -->
+  <section>
+    <h2 class="section-title">Reports</h2>
+    <div id="logsContainer" class="grid"></div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section>
+    <h2 class="section-title">Timeline</h2>
+
+    <div class="filters">
+      <select id="timelineCaseFilter">
+        <option value="all">All</option>
+        <option value="P1">P1</option>
+        <option value="P2">P2</option>
+        <option value="P3">P3</option>
+      </select>
+
+      <select id="timelineSort">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
       </select>
     </div>
 
-    <div id="logsContainer">Loading reports...</div>
+    <div id="timelineContainer" class="grid"></div>
+  </section>
 
-  </div>
+</main>
 
-  <script type="module" src="./js/reportLogs.js"></script>
+<!-- LIBRARIES -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- APP PAGE SCRIPTS -->
+<script type="module" src="./js/reportLogs.js"></script>
+<script type="module" src="./js/timeline.js"></script>
 
 </body>
 </html>
