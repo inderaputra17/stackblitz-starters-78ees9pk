@@ -10,6 +10,12 @@
 
   <!-- Dashboard CSS -->
   <link rel="stylesheet" href="./css/dashboard.css">
+
+  <!-- ✅ PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Recommended for PWA appearance -->
+  <meta name="theme-color" content="#C62828">
 </head>
 
 <body>
@@ -116,6 +122,14 @@
 
 <!-- 🔥 MUST LOAD LAST: LOGIC DEPENDS ON ELEMENTS ABOVE -->
 <script type="module" src="./js/dashboard.js"></script>
+
+<!-- ✅ SERVICE WORKER REGISTRATION -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js")
+      .catch(err => console.error("SW registration failed:", err));
+  }
+</script>
 
 </body>
 </html>
