@@ -1,0 +1,323 @@
+/* ===========================================
+   ROOT COLOURS — MATCHING YOUR SYSTEM
+=========================================== */
+:root {
+  --red: #E63946;
+  --red-dark: #C62828;
+  --blue: #1565C0;
+  --text: #333;
+  --bg: #fafafa;
+
+  --card-bg: #fff;
+  --border: #ddd;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 10px rgba(0,0,0,0.12);
+
+  --ok: #2E7D32;
+  --low: #FBC02D;
+  --critical: #E53935;
+}
+
+/* ===========================================
+   GLOBAL
+=========================================== */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  scroll-behavior: smooth;
+}
+
+.container {
+  max-width: 780px;
+  margin: auto;
+  padding: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===========================================
+   NAV BAR
+=========================================== */
+.nav {
+  background: white;
+  padding: 16px;
+  border-bottom: 3px solid var(--red);
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.nav-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.nav-link-left,
+.nav-link-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--red);
+}
+
+.nav-link-left { left: 16px; }
+.nav-link-right { right: 16px; }
+
+/* ===========================================
+   CARD STYLING
+=========================================== */
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  transition: 0.25s ease;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red-dark);
+  margin-bottom: 14px;
+}
+
+/* ===========================================
+   STEP INDICATOR — UPDATED FOR MOBILE
+=========================================== */
+.steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: #f2f2f2;
+  border: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text);
+  transition: 0.25s ease;
+}
+
+.step.active {
+  background: var(--red);
+  border-color: var(--red-dark);
+  color: white;
+}
+
+/* Hover effect */
+.step:hover {
+  background: #ffe6e6;
+}
+
+/* ===========================================
+   INPUTS
+=========================================== */
+.input {
+  width: 100%;
+  max-width: 420px;
+  padding: 12px;
+  margin: 0 auto 12px auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: 15px;
+  background: white;
+  display: block;
+  transition: 0.25s ease;
+}
+
+.input:focus {
+  border-color: var(--red);
+  outline: none;
+  box-shadow: 0 0 6px rgba(230,57,70,0.3);
+}
+
+/* ===========================================
+   ITEM LIST
+=========================================== */
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item-row {
+  background: #f8f8f8;
+  padding: 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: 0.25s ease;
+}
+
+.item-row.active {
+  border-color: var(--blue);
+  background: #eef4ff;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Style for zero-stock items */
+.disabled-item {
+  color: #999;
+}
+
+/* ===========================================
+   QUANTITY CONTROLS
+=========================================== */
+.qty-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+}
+
+.qty-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: #e6e6e6;
+  border: 1px solid var(--border);
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.qty-btn:hover:not([disabled]) {
+  background: #d5d5d5;
+}
+
+.qty-btn:active:not([disabled]) {
+  transform: scale(0.92);
+}
+
+.qty-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.qty-display {
+  width: 26px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ===========================================
+   MINI PREVIEW (from JS live updates)
+=========================================== */
+.mini-preview {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+  white-space: nowrap;
+  font-style: italic;
+}
+
+/* ===========================================
+   BUTTONS
+=========================================== */
+.btn {
+  width: 100%;
+  max-width: 420px;
+  padding: 12px;
+  margin: 14px auto 0 auto;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  display: block;
+  font-size: 16px;
+  box-shadow: var(--shadow);
+  transition: 0.25s ease;
+}
+
+.next-btn,
+.confirm-btn {
+  background: var(--red);
+  color: white;
+}
+
+.next-btn:hover,
+.confirm-btn:hover {
+  background: var(--red-dark);
+}
+
+.next-btn:disabled,
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.back-btn {
+  background: #ddd;
+  color: var(--text);
+}
+
+.back-btn:hover {
+  background: #cfcfcf;
+}
+
+/* ===========================================
+   PREVIEW BOX
+=========================================== */
+.preview-box {
+  background: #fafafa;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  white-space: pre-line;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ===========================================
+   UNDO BOX
+=========================================== */
+.undo-box {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: #f5f5f5;
+  border: 1px solid var(--border);
+  text-align: center;
+  font-weight: 600;
+}
+
+.undo-btn {
+  margin-top: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--red);
+  color: white;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.undo-btn:hover {
+  background: var(--red-dark);
+}
