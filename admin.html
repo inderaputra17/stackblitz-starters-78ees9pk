@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin • Staff Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/admin.css">
+</head>
+
+<body>
+
+<!-- 🔐 SECURITY: session + permission check -->
+<script src="./js/session-check.js"></script>
+<script src="./js/permissions-check.js"></script>
+
+<header class="topbar">
+  <h1>Staff Admin</h1>
+</header>
+
+<main class="container">
+
+  <!-- Back to Dashboard -->
+  <a href="index.html" class="back-link">← Back to Dashboard</a>
+
+  <!-- ADD / EDIT STAFF -->
+  <section class="card">
+    <h2 class="section-title" id="formTitle">Add Staff</h2>
+
+    <form id="staffForm" class="staff-form">
+
+      <div class="form-group">
+        <label for="staffName">Name</label>
+        <input id="staffName" type="text" class="input" required>
+      </div>
+
+      <div class="form-group">
+        <label for="staffRole">Role (optional)</label>
+        <input id="staffRole" type="text" class="input" placeholder="Admin, Medic...">
+      </div>
+
+      <div class="form-group">
+        <label for="staffPin">6-Digit PIN</label>
+        <div class="pin-row">
+          <input 
+            id="staffPin" 
+            type="password" 
+            class="input"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            required
+          >
+          <button type="button" id="togglePin" class="btn small-btn">Show</button>
+        </div>
+        <small class="help-text">Numbers only — exactly 6 digits.</small>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input id="staffActive" type="checkbox" checked>
+          Active
+        </label>
+      </div>
+
+      <!-- PERMISSIONS -->
+      <h3 class="section-title">Permissions</h3>
+
+      <div class="permissions-grid">
+        <label><input type="checkbox" id="permDashboard"> Dashboard</label>
+        <label><input type="checkbox" id="permInventory"> Inventory</label>
+        <label><input type="checkbox" id="permAddStock"> Add Stock</label>
+        <label><input type="checkbox" id="permTransfer"> Transfer</label>
+        <label><input type="checkbox" id="permReports"> Reports</label>
+        <label><input type="checkbox" id="permAdminPage"> Admin Page</label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn primary-btn">Save Staff</button>
+        <button type="button" id="resetForm" class="btn secondary-btn">Reset</button>
+      </div>
+
+    </form>
+  </section>
+
+  <!-- STAFF LIST -->
+  <section class="card">
+    <h2 class="section-title">Staff List</h2>
+    <div id="staffList" class="staff-list">
+      <p class="empty">No staff yet.</p>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="./js/admin.js"></script>
+</body>
+</html>
