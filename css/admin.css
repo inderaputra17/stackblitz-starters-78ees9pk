@@ -1,0 +1,211 @@
+/* ROOT THEME */
+:root {
+  --red: #E63946;
+  --red-dark: #C62828;
+  --blue: #1565C0;
+  --text: #333;
+  --bg: #fafafa;
+
+  --card-bg: #fff;
+  --border: #ddd;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+/* GENERAL */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 780px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* TOP BAR */
+.topbar {
+  background: var(--red);
+  padding: 20px;
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+/* CARD */
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red-dark);
+  margin-bottom: 16px;
+}
+
+/* FORM */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 15px;
+}
+
+/* PIN ROW */
+.pin-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.help-text {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* CHECKBOX */
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* PERMISSION GROUP */
+.perm-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f8f8f8;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+/* BUTTONS */
+.btn {
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  box-shadow: var(--shadow);
+}
+
+.primary-btn {
+  background: var(--red);
+  color: white;
+}
+
+.secondary-btn {
+  background: #ddd;
+}
+
+.danger-btn {
+  background: #E53935;
+  color: white;
+}
+
+/* STAFF LIST */
+.staff-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.staff-card {
+  background: #f8f8f8;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.staff-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.staff-name {
+  font-weight: 700;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge.active {
+  background: #D8F5D8;
+  color: #256029;
+}
+
+.badge.inactive {
+  background: #FFD1D1;
+  color: #7a0000;
+}
+
+.staff-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.empty {
+  text-align: center;
+  opacity: 0.7;
+}
+/* Back link */
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: var(--red-dark);
+  text-decoration: none;
+}
+.back-link:hover {
+  opacity: 0.7;
+}
+
+/* Permission checkbox grid fix */
+.permissions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: #f8f8f8;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+/* Staff action buttons match dashboard style */
+.staff-actions button {
+  flex: 1;
+}
+
+/* Ensure card consistency */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
